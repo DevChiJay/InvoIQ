@@ -3,6 +3,7 @@ from app.api.v1.auth import router as auth_router
 from app.api.v1.users import router as users_router
 from app.api.v1.clients import router as clients_router
 from app.api.v1.invoices import router as invoices_router
+from app.api.v1.extraction import router as extraction_router
 from app.db.session import Base, engine
 
 # Ensure models are imported so SQLAlchemy registers them with Base.metadata
@@ -19,6 +20,7 @@ app.include_router(auth_router, prefix="/v1/auth", tags=["auth"])
 app.include_router(users_router, prefix="/v1", tags=["users"]) 
 app.include_router(clients_router, prefix="/v1", tags=["clients"]) 
 app.include_router(invoices_router, prefix="/v1", tags=["invoices"]) 
+app.include_router(extraction_router, prefix="/v1", tags=["extraction"]) 
 
 
 @app.on_event("startup")
