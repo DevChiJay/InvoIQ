@@ -2,8 +2,9 @@ from datetime import date
 from decimal import Decimal
 from typing import List, Optional
 
-from fastapi import APIRouter, Depends, HTTPException, status, Header
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
+from sqlalchemy.exc import IntegrityError
 
 from app.db.session import get_db
 from app.dependencies.auth import get_current_user
@@ -13,10 +14,8 @@ from app.models.extraction import Extraction
 from app.models.invoice import Invoice, InvoiceItem
 from app.schemas.generate import GenerateInvoiceRequest
 from app.schemas.invoice import InvoiceOut, InvoiceItemCreate
-from app.services.pdf_generator import generate_invoice_pdf, PDFItem
 from app.services.paystack import create_payment_link as paystack_link
 from app.services.stripe import create_payment_link as stripe_link
-from app.models.idempotency import IdempotencyKey
 
 router = APIRouter()
 
@@ -58,22 +57,7 @@ def generate_invoice(
     payload: GenerateInvoiceRequest,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
-    idem_header: Optional[str] = Header(default=None, alias="Idempotency-Key"),
 ):
-    # Resolve idempotency key from header or body
-    idem_key = payload.idempotency_key or idem_header
-    if idem_key:
-        existing = (
-            db.query(IdempotencyKey)
-            .filter(IdempotencyKey.user_id == current_user.id, IdempotencyKey.key == idem_key)
-            .first()
-        )
-        if existing:
-            if existing.resource_type == "invoice":
-                inv = db.get(Invoice, existing.resource_id)
-                if inv and inv.user_id == current_user.id:
-                    return inv
-            # If resource missing, allow recreation
     # Validate client ownership
     client = db.get(Client, payload.client_id)
     if not client or client.user_id != current_user.id:
@@ -132,6 +116,18 @@ def generate_invoice(
         )
         number = f"INV-{today:%Y%m%d}-{count_today + 1:03d}"
 
+    # Check for existing invoice with same number
+    existing_invoice = (
+        db.query(Invoice)
+        .filter(Invoice.user_id == current_user.id, Invoice.number == number)
+        .first()
+    )
+    if existing_invoice:
+        raise HTTPException(
+            status_code=400, 
+            detail=f"Invoice number '{number}' already exists. Please use a different number."
+        )
+
     invoice = Invoice(
         user_id=current_user.id,
         client_id=client.id,
@@ -143,8 +139,16 @@ def generate_invoice(
         tax=tax,
         total=total,
     )
-    db.add(invoice)
-    db.flush()
+    
+    try:
+        db.add(invoice)
+        db.flush()
+    except IntegrityError:
+        db.rollback()
+        raise HTTPException(
+            status_code=400,
+            detail=f"Invoice number '{number}' already exists. Please use a different number."
+        )
 
     # Add items
     for it in items:
@@ -158,37 +162,12 @@ def generate_invoice(
             )
         )
 
-    # Generate PDF
-    pdf_items = []
-    for it in items:
-        amt = it.amount
-        if amt is None:
-            amt = _quant(Decimal(it.quantity) * Decimal(it.unit_price))
-        pdf_items.append(PDFItem(it.description, Decimal(it.quantity), Decimal(it.unit_price), Decimal(amt)))
-
-    sub = _quant(subtotal) if subtotal is not None else _quant(0)
-    tx = _quant(tax) if tax is not None else _quant(0)
-    tot = _quant(total) if total is not None else _quant(sub + tx)
-
-    _, pdf_url = generate_invoice_pdf(
-        invoice_number=payload.number,
-        client_name=client.name,
-        client_email=client.email,
-        client_address=client.address,
-        issued_date=issued_date,
-        due_date=due_date,
-        items=pdf_items,
-        subtotal=sub,
-        tax=tx,
-        total=tot,
-    )
-    invoice.pdf_url = pdf_url
-
     # Optional payment link
     if payload.create_payment_link:
         ref = f"inv{invoice.id}"
         link = ""
         provider = payload.payment_provider or ("paystack" if currency == "NGN" else "stripe")
+        tot = _quant(total) if total is not None else _quant(0)
         if provider == "paystack":
             email = client.email or "customer@example.com"
             link = paystack_link(amount=tot, email=email, reference=ref, currency="NGN")
@@ -200,11 +179,4 @@ def generate_invoice(
     db.commit()
     db.refresh(invoice)
 
-    # Persist idempotency key mapping
-    if idem_key:
-        try:
-            db.add(IdempotencyKey(user_id=current_user.id, key=idem_key, resource_type="invoice", resource_id=invoice.id))
-            db.commit()
-        except Exception:
-            db.rollback()
     return invoice

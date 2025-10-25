@@ -26,4 +26,3 @@ class GenerateInvoiceRequest(BaseModel):
     # Payments
     create_payment_link: Optional[bool] = False
     payment_provider: Optional[Literal["paystack", "stripe"]] = None
-    idempotency_key: Optional[str] = None

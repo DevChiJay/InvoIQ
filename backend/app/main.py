@@ -18,7 +18,6 @@ from app.models import client as client_model  # noqa: F401
 from app.models import invoice as invoice_model  # noqa: F401
 from app.models import payment as payment_model  # noqa: F401
 from app.models import extraction as extraction_model  # noqa: F401
-from app.models import idempotency as idempotency_model  # noqa: F401
 
 app = FastAPI(title="InvoIQ API", version="0.1.0")
 
