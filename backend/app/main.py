@@ -9,6 +9,7 @@ from app.api.v1.invoices import router as invoices_router
 from app.api.v1.extraction import router as extraction_router
 from app.api.v1.generate import router as generate_router
 from app.api.v1.reminders import router as reminders_router
+from app.api.v1.payments import router as payments_router
 from app.db.session import Base, engine
 from app.core.config import settings
 
@@ -38,6 +39,7 @@ app.include_router(invoices_router, prefix="/v1", tags=["invoices"])
 app.include_router(extraction_router, prefix="/v1", tags=["extraction"]) 
 app.include_router(generate_router, prefix="/v1", tags=["invoice-generation"]) 
 app.include_router(reminders_router, prefix="/v1", tags=["reminders"]) 
+app.include_router(payments_router, prefix="/v1/payments", tags=["payments"]) 
 
 # Serve generated files via /static for local/dev usage
 os.makedirs(settings.STORAGE_LOCAL_DIR, exist_ok=True)

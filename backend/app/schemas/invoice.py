@@ -53,7 +53,7 @@ class InvoiceOut(InvoiceBase):
     id: int
     items: List[InvoiceItemOut] = []
     pdf_url: str | None = None
-    payment_link: str | None = None
+    payment_link: str | None = None  # Optional user-provided payment link
 
     class Config:
         from_attributes = True

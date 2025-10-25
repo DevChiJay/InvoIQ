@@ -14,8 +14,6 @@ from app.models.extraction import Extraction
 from app.models.invoice import Invoice, InvoiceItem
 from app.schemas.generate import GenerateInvoiceRequest
 from app.schemas.invoice import InvoiceOut, InvoiceItemCreate
-from app.services.paystack import create_payment_link as paystack_link
-from app.services.stripe import create_payment_link as stripe_link
 
 router = APIRouter()
 
@@ -162,18 +160,9 @@ def generate_invoice(
             )
         )
 
-    # Optional payment link
-    if payload.create_payment_link:
-        ref = f"inv{invoice.id}"
-        link = ""
-        provider = payload.payment_provider or ("paystack" if currency == "NGN" else "stripe")
-        tot = _quant(total) if total is not None else _quant(0)
-        if provider == "paystack":
-            email = client.email or "customer@example.com"
-            link = paystack_link(amount=tot, email=email, reference=ref, currency="NGN")
-        else:
-            link = stripe_link(amount=tot, currency=(currency or "USD"), reference=ref)
-        invoice.payment_link = link
+    # Set payment_link if provided by user
+    if payload.payment_link:
+        invoice.payment_link = payload.payment_link
 
     db.add(invoice)
     db.commit()

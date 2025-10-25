@@ -26,13 +26,12 @@ class Invoice(Base):
     total = Column(Numeric(12, 2), nullable=True)
 
     pdf_url = Column(String, nullable=True)
-    payment_link = Column(String, nullable=True)
+    payment_link = Column(String, nullable=True)  # Optional user-provided payment link
     notes = Column(JSON, nullable=True)  # renamed from metadata to avoid SQLAlchemy conflict
 
     # Relationships
     client = relationship("Client", back_populates="invoices")
     items = relationship("InvoiceItem", back_populates="invoice", cascade="all, delete-orphan")
-    payments = relationship("Payment", back_populates="invoice", cascade="all, delete-orphan")
 
 
 class InvoiceItem(Base):

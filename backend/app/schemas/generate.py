@@ -1,6 +1,6 @@
 from datetime import date
 from decimal import Decimal
-from typing import List, Literal, Optional
+from typing import List, Optional
 from pydantic import BaseModel
 
 from app.schemas.invoice import InvoiceItemCreate
@@ -23,6 +23,5 @@ class GenerateInvoiceRequest(BaseModel):
     total: Optional[Decimal] = None
     currency: Optional[str] = None
 
-    # Payments
-    create_payment_link: Optional[bool] = False
-    payment_provider: Optional[Literal["paystack", "stripe"]] = None
+    # Optional user-provided payment link
+    payment_link: Optional[str] = None

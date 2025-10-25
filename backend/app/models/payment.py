@@ -9,11 +9,17 @@ class Payment(Base):
     __tablename__ = "payments"
 
     id = Column(Integer, primary_key=True, index=True)
-    invoice_id = Column(Integer, ForeignKey("invoices.id", ondelete="CASCADE"), nullable=False, index=True)
+    user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
+    payment_type = Column(String, nullable=False, default="subscription")  # subscription, one-time
     amount = Column(Numeric(12, 2), nullable=False)
-    provider = Column(String, nullable=False, default="paystack")
+    currency = Column(String, nullable=False, default="USD")
+    provider = Column(String, nullable=False, default="paystack")  # paystack, stripe
     provider_ref = Column(String, nullable=True)
-    status = Column(String, nullable=False, default="pending")  # pending, paid, failed
+    provider_subscription_id = Column(String, nullable=True)  # for recurring payments
+    status = Column(String, nullable=False, default="pending")  # pending, paid, failed, cancelled
+    description = Column(String, nullable=True)
     created_at = Column(DateTime, nullable=False, default=datetime.utcnow)
+    updated_at = Column(DateTime, nullable=True, default=datetime.utcnow)
 
-    invoice = relationship("Invoice", back_populates="payments")
+    # Relationship to user instead of invoice
+    user = relationship("User", foreign_keys=[user_id])
