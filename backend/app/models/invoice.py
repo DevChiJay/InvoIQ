@@ -1,5 +1,5 @@
 from datetime import date
-from sqlalchemy import Column, Integer, String, ForeignKey, Date, Numeric, JSON, Text
+from sqlalchemy import Column, Integer, String, ForeignKey, Date, Numeric, JSON, Text, UniqueConstraint
 from sqlalchemy.orm import relationship
 
 from app.db.session import Base
@@ -7,6 +7,10 @@ from app.db.session import Base
 
 class Invoice(Base):
     __tablename__ = "invoices"
+    __table_args__ = (
+        # Enforce per-user unique invoice number when provided
+        UniqueConstraint("user_id", "number", name="uq_user_invoice_number"),
+    )
 
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)

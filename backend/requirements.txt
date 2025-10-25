@@ -8,3 +8,7 @@ python-multipart
 pytest
 httpx
 python-dotenv
+reportlab
+stripe
+weasyprint
+jinja2

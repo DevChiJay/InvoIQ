@@ -52,6 +52,8 @@ class InvoiceUpdate(BaseModel):
 class InvoiceOut(InvoiceBase):
     id: int
     items: List[InvoiceItemOut] = []
+    pdf_url: str | None = None
+    payment_link: str | None = None
 
     class Config:
         from_attributes = True

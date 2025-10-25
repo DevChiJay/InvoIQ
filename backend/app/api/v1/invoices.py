@@ -1,6 +1,7 @@
 from typing import List
 from decimal import Decimal, ROUND_HALF_UP
-from fastapi import APIRouter, Depends, HTTPException, status
+from datetime import date
+from fastapi import APIRouter, Depends, HTTPException, status, Response
 from sqlalchemy.orm import Session
 
 from app.dependencies.auth import get_current_user
@@ -27,8 +28,14 @@ def _get_owned_invoice(db: Session, current_user: User, invoice_id: int) -> Invo
 def list_invoices(
     limit: int = 50,
     offset: int = 0,
+    status: str | None = None,
+    client_id: int | None = None,
+    due_from: date | None = None,
+    due_to: date | None = None,
+    cursor: int | None = None,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
+    response: Response = None,
 ):
     # Sanitize pagination
     if limit <= 0:
@@ -36,13 +43,25 @@ def list_invoices(
     limit = min(limit, 100)
     if offset < 0:
         offset = 0
-    return (
-        db.query(Invoice)
-        .filter(Invoice.user_id == current_user.id)
-        .limit(limit)
-        .offset(offset)
-        .all()
-    )
+    q = db.query(Invoice).filter(Invoice.user_id == current_user.id)
+    if status:
+        q = q.filter(Invoice.status == status)
+    if client_id:
+        q = q.filter(Invoice.client_id == client_id)
+    if due_from:
+        q = q.filter(Invoice.due_date >= due_from)
+    if due_to:
+        q = q.filter(Invoice.due_date <= due_to)
+    if cursor:
+        q = q.filter(Invoice.id > cursor)
+
+    q = q.order_by(Invoice.id.asc()).limit(limit).offset(offset)
+    rows = q.all()
+
+    # Expose a simple cursor in header if more results likely exist
+    if rows:
+        response.headers["X-Next-Cursor"] = str(rows[-1].id)
+    return rows
 
 
 @router.post("/invoices", response_model=InvoiceOut, status_code=status.HTTP_201_CREATED)
