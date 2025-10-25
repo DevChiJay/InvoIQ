@@ -8,7 +8,7 @@ class Extraction(Base):
     __tablename__ = "extractions"
 
     id = Column(Integer, primary_key=True, index=True)
-    user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
+    user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=True, index=True)  # Allow anonymous extractions
     source_type = Column(String, nullable=False)  # screenshot | text
     source_url = Column(String, nullable=True)
     raw_text = Column(String, nullable=True)

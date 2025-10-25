@@ -6,9 +6,11 @@ import httpx
 OPENAI_API_URL = "https://api.openai.com/v1/chat/completions"
 
 PROMPT_SYSTEM = (
-    "You extract structured invoice/job details from chat text. "
+    "You extract structured invoice/job details from chat text or images. "
     "Return only JSON with keys: jobs (list of strings), deadlines (list of ISO dates or strings), "
-    "payment_terms (string|null), amount (number|null), currency (string|null), confidence (0-100)."
+    "payment_terms (string|null), amount (number|null), currency (string|null), "
+    "client_name (string|null), client_email (string|null), client_address (string|null), "
+    "confidence (0-100)."
 )
 
 PROMPT_USER_TEMPLATE = (
@@ -55,6 +57,9 @@ class OpenAIExtractor:
                     "payment_terms": None,
                     "amount": None,
                     "currency": None,
+                    "client_name": None,
+                    "client_email": None,
+                    "client_address": None,
                     "confidence": 50,
                 }
 
@@ -110,6 +115,9 @@ class OpenAIExtractor:
                     "payment_terms": None,
                     "amount": None,
                     "currency": None,
+                    "client_name": None,
+                    "client_email": None,
+                    "client_address": None,
                     "confidence": 50,
                 }
 
