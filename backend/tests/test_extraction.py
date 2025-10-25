@@ -74,7 +74,7 @@ def test_extract_text_minimal_flow(client_app: TestClient, monkeypatch):
     headers = auth_headers(client_app)
     r = client_app.post(
         "/v1/extract-job-details",
-        data={"text": "Please do a logo design for $500 by Oct 30, 50% upfront."},
+        data={"text": "Make an invoice for Matthew Philips. He want 2 feet container delivered to Nigeria by December 9th and is willing to pay 70% of the total amount of 5 million naira"},
         headers=headers,
     )
     assert r.status_code == 200, r.text
