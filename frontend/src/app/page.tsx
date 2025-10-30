@@ -3,6 +3,15 @@
 import { useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuthStore } from '@/stores/auth-store';
+import Navbar from '@/components/landing/navbar';
+import HeroSection from '@/components/landing/hero-section';
+import FeaturesSection from '@/components/landing/features-section';
+import HowItWorks from '@/components/landing/how-it-works';
+import DemoSection from '@/components/demo/demo-section';
+import TestimonialsSection from '@/components/landing/testimonials-section';
+import PricingSection from '@/components/landing/pricing-section';
+import CTASection from '@/components/landing/cta-section';
+import Footer from '@/components/landing/footer';
 
 export default function Home() {
   const router = useRouter();
@@ -17,25 +26,37 @@ export default function Home() {
     }
   }, []);
 
+  // Redirect authenticated users to dashboard
   useEffect(() => {
-    // Only redirect after hydration is complete
-    if (_hasHydrated) {
-      if (isAuthenticated) {
-        router.push('/dashboard');
-      } else {
-        router.push('/login');
-      }
+    if (_hasHydrated && isAuthenticated) {
+      router.push('/dashboard');
     }
   }, [_hasHydrated, isAuthenticated, router]);
 
-  // Show loading state while redirecting
-  return (
-    <div className="flex items-center justify-center min-h-screen">
-      <div className="text-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
-        <p className="mt-4 text-muted-foreground">Redirecting...</p>
+  // Show landing page for unauthenticated users
+  if (!_hasHydrated) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600" />
       </div>
-    </div>
+    );
+  }
+
+  if (isAuthenticated) {
+    return null; // Will redirect to dashboard
+  }
+
+  return (
+    <main className="min-h-screen">
+      <Navbar />
+      <HeroSection />
+      <FeaturesSection />
+      <HowItWorks />
+      <DemoSection />
+      <TestimonialsSection />
+      <PricingSection />
+      <CTASection />
+      <Footer />
+    </main>
   );
 }
-

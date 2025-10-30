@@ -108,7 +108,25 @@ export interface InvoiceListParams {
   cursor?: number;
 }
 
-// Extraction Types
+// Extraction Types - Backend Response Format
+export interface BackendExtractionData {
+  jobs?: string[];
+  deadlines?: string[];
+  payment_terms?: string | null;
+  amount?: number | null;
+  currency?: string | null;
+  client_name?: string | null;
+  client_email?: string | null;
+  client_address?: string | null;
+  confidence?: number;
+}
+
+export interface BackendExtractionResponse {
+  extraction_id: number;
+  parsed: BackendExtractionData;
+}
+
+// Frontend Display Format (transformed from backend)
 export interface ExtractedData {
   client?: {
     name?: string;
@@ -133,14 +151,12 @@ export interface ExtractedData {
     total?: number;
   };
   notes?: string;
+  confidence?: number;
 }
 
 export interface ExtractionResponse {
-  id: number;
-  user_id: number;
-  raw_text: string;
+  extraction_id: number;
   parsed: ExtractedData;
-  created_at: string;
 }
 
 // Payment Types

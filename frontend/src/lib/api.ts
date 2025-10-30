@@ -8,7 +8,7 @@ import type {
   InvoiceCreate,
   InvoiceUpdate,
   InvoiceListParams,
-  ExtractionResponse,
+  BackendExtractionResponse,
   SubscriptionStatus,
   AuthResponse,
 } from '@/types/api';
@@ -138,7 +138,7 @@ export const generateAPI = {
 
 export const extractionAPI = {
   extractJobDetails: (formData: FormData) =>
-    api.post<ExtractionResponse>('/v1/extract-job-details', formData, {
+    api.post<BackendExtractionResponse>('/v1/extract-job-details', formData, {
       headers: { 'Content-Type': 'multipart/form-data' },
     }),
 };
@@ -161,4 +161,12 @@ export const paymentsAPI = {
 export const remindersAPI = {
   send: (invoice_id: number) =>
     api.post('/v1/send-reminder', null, { params: { invoice_id } }),
+};
+
+// Demo extraction helper - uses the same endpoint as authenticated extraction
+export const demoExtract = async (text: string) => {
+  const formData = new FormData();
+  formData.append('text', text);
+  // file field is not added, will be null on backend
+  return extractionAPI.extractJobDetails(formData);
 };
