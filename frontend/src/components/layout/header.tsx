@@ -1,11 +1,13 @@
 'use client';
 
 import { useAuthStore } from '@/stores/auth-store';
+import { useUIStore } from '@/stores/ui-store';
 import { Button } from '@/components/ui/button';
-import { LogOut } from 'lucide-react';
+import { LogOut, Menu } from 'lucide-react';
 
 export default function Header() {
   const { user, logout } = useAuthStore();
+  const { toggleMobileMenu } = useUIStore();
 
   const handleLogout = () => {
     logout();
@@ -15,7 +17,18 @@ export default function Header() {
     <header className="bg-white dark:bg-[#0F172A] border-b-2 border-indigo-100 dark:border-[#6366F1]/20 sticky top-0 z-40 shadow-sm">
       <div className="px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
-          <div className="flex items-center">
+          <div className="flex items-center gap-3">
+            {/* Mobile menu button */}
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={toggleMobileMenu}
+              className="lg:hidden p-2 hover:bg-[#6366F1]/10 dark:hover:bg-[#6366F1]/20"
+              aria-label="Toggle menu"
+            >
+              <Menu className="h-6 w-6" />
+            </Button>
+            
             <h1 className="text-2xl font-bold bg-gradient-to-r from-[#6366F1] to-[#14B8A6] bg-clip-text text-transparent">InvoIQ</h1>
           </div>
 

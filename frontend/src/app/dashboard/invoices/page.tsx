@@ -5,15 +5,26 @@ import { InvoiceList } from '@/components/invoices/invoice-list';
 import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-react';
 import Link from 'next/link';
+import { toast } from 'sonner';
 
 export default function InvoicesPage() {
   const { data: invoices, isLoading } = useInvoices();
   const deleteInvoice = useDeleteInvoice();
 
   const handleDelete = (id: number) => {
-    if (window.confirm('Are you sure you want to delete this invoice?')) {
-      deleteInvoice.mutate(id);
-    }
+    toast.promise(
+      new Promise((resolve, reject) => {
+        deleteInvoice.mutate(id, {
+          onSuccess: resolve,
+          onError: reject,
+        });
+      }),
+      {
+        loading: 'Deleting invoice...',
+        success: 'Invoice deleted successfully',
+        error: 'Failed to delete invoice',
+      }
+    );
   };
 
   return (

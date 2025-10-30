@@ -6,8 +6,9 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Loader2, Plus, Trash2 } from 'lucide-react';
-import type { Invoice, InvoiceCreate, InvoiceUpdate, InvoiceItem } from '@/types/api';
+import { Loader2, Plus, Trash2, UserPlus } from 'lucide-react';
+import { ClientFormModal } from '@/components/clients/client-form-modal';
+import type { Invoice, InvoiceCreate, InvoiceUpdate, InvoiceItem, Client } from '@/types/api';
 import { useClients } from '@/lib/hooks/use-clients';
 
 interface InvoiceFormProps {
@@ -33,6 +34,7 @@ export function InvoiceForm({
   preselectedClientId,
 }: InvoiceFormProps) {
   const { data: clients } = useClients();
+  const [isClientModalOpen, setIsClientModalOpen] = useState(false);
 
   const [formData, setFormData] = useState({
     client_id: invoice?.client_id || preselectedClientId || 0,
@@ -133,8 +135,20 @@ export function InvoiceForm({
     }
   };
 
+  const handleClientCreated = (client: Client) => {
+    // Auto-select the newly created client
+    handleChange('client_id', client.id);
+  };
+
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
+      {/* Client Form Modal */}
+      <ClientFormModal
+        open={isClientModalOpen}
+        onOpenChange={setIsClientModalOpen}
+        onClientCreated={handleClientCreated}
+      />
+
       {/* Client & Dates */}
       <Card>
         <CardHeader>
@@ -143,9 +157,22 @@ export function InvoiceForm({
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="client_id">
-              Client <span className="text-destructive">*</span>
-            </Label>
+            <div className="flex items-center justify-between">
+              <Label htmlFor="client_id">
+                Client <span className="text-destructive">*</span>
+              </Label>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => setIsClientModalOpen(true)}
+                disabled={isLoading}
+                className="gap-1"
+              >
+                <UserPlus className="h-4 w-4" />
+                Add New Client
+              </Button>
+            </div>
             <select
               id="client_id"
               className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"

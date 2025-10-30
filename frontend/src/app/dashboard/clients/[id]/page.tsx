@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Mail, Phone, MapPin, Pencil, Trash2, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 import { formatRelativeDate } from '@/lib/format';
+import { toast } from 'sonner';
 
 export default function ClientDetailPage() {
   const params = useParams();
@@ -16,13 +17,22 @@ export default function ClientDetailPage() {
   const deleteClient = useDeleteClient();
 
   const handleDelete = () => {
-    if (window.confirm('Are you sure you want to delete this client? This action cannot be undone.')) {
-      deleteClient.mutate(clientId, {
-        onSuccess: () => {
-          router.push('/dashboard/clients');
-        },
-      });
-    }
+    toast.promise(
+      new Promise((resolve, reject) => {
+        deleteClient.mutate(clientId, {
+          onSuccess: () => {
+            router.push('/dashboard/clients');
+            resolve(true);
+          },
+          onError: reject,
+        });
+      }),
+      {
+        loading: 'Deleting client...',
+        success: 'Client deleted successfully',
+        error: 'Failed to delete client',
+      }
+    );
   };
 
   if (isLoading) {
