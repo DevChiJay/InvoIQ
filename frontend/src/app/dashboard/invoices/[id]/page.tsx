@@ -7,7 +7,8 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { InvoicePreview } from '@/components/invoices/invoice-preview';
-import { Pencil, Trash2, ArrowLeft, Download } from 'lucide-react';
+import { InvoicePDFViewer } from '@/components/invoices/invoice-pdf-viewer';
+import { Pencil, Trash2, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 import { formatRelativeDate } from '@/lib/format';
 import { toast } from 'sonner';
@@ -129,10 +130,6 @@ export default function InvoiceDetailPage() {
           </div>
         </div>
         <div className="flex flex-wrap gap-2">
-          <Button variant="outline" size="sm" disabled>
-            <Download className="mr-2 h-4 w-4" />
-            Download PDF
-          </Button>
           <Button variant="outline" size="sm" asChild>
             <Link href={`/dashboard/invoices/${invoice.id}/edit`}>
               <Pencil className="mr-2 h-4 w-4" />
@@ -153,6 +150,9 @@ export default function InvoiceDetailPage() {
 
       {/* Invoice Preview with Client Info */}
       <InvoicePreview invoice={invoice} client={client} />
+
+      {/* PDF Viewer */}
+      <InvoicePDFViewer invoiceId={invoice.id} />
     </div>
   );
 }

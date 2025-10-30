@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -36,22 +36,42 @@ export function InvoiceForm({
   const { data: clients } = useClients();
   const [isClientModalOpen, setIsClientModalOpen] = useState(false);
 
+  // Load extraction data from session storage
+  const extractedData = useMemo(() => {
+    if (invoice || isEdit) return null;
+    
+    const extractedInvoiceData = sessionStorage.getItem('extractedInvoiceData');
+    if (!extractedInvoiceData) return null;
+
+    try {
+      const data = JSON.parse(extractedInvoiceData);
+      // Clear after reading
+      sessionStorage.removeItem('extractedInvoiceData');
+      sessionStorage.removeItem('extractedClientData');
+      return data;
+    } catch (error) {
+      console.error('Failed to parse extracted invoice data:', error);
+      return null;
+    }
+  }, [invoice, isEdit]);
+
   const [formData, setFormData] = useState({
-    client_id: invoice?.client_id || preselectedClientId || 0,
+    client_id: invoice?.client_id || extractedData?.client_id || preselectedClientId || 0,
     issued_date: invoice?.issued_date
       ? new Date(invoice.issued_date).toISOString().split('T')[0]
-      : new Date().toISOString().split('T')[0],
+      : extractedData?.issued_date || new Date().toISOString().split('T')[0],
     due_date: invoice?.due_date
       ? new Date(invoice.due_date).toISOString().split('T')[0]
-      : getDefaultDueDate(),
-    tax: invoice?.tax || 0,
-    notes: invoice?.notes || '',
+      : extractedData?.due_date || getDefaultDueDate(),
+    tax: invoice?.tax ?? extractedData?.tax ?? 0,
+    notes: invoice?.notes || extractedData?.notes || '',
   });
 
   const [items, setItems] = useState<InvoiceItem[]>(
-    invoice?.items || [
-      { description: '', quantity: 1, unit_price: 0, amount: 0 },
-    ]
+    invoice?.items || 
+    (extractedData?.items && Array.isArray(extractedData.items) && extractedData.items.length > 0 
+      ? extractedData.items 
+      : [{ description: '', quantity: 1, unit_price: 0, amount: 0 }])
   );
 
   const [errors, setErrors] = useState<Record<string, string>>({});

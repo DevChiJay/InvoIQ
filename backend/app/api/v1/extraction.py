@@ -34,9 +34,6 @@ def extract_job_details(
         file_bytes = file.file.read()
         file_mime = getattr(file, "content_type", None)
 
-    if not raw_text:
-        raise HTTPException(status_code=400, detail="No text provided or extractable from image")
-
     extractor = get_extractor(provider)
     try:
         if file_bytes and hasattr(extractor, "extract"):
