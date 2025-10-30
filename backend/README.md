@@ -117,12 +117,11 @@ DATABASE_URL=postgresql://user:password@db.project.supabase.co:5432/postgres?ssl
 | PUT | `/v1/invoices/{id}` | Update invoice | Yes |
 | DELETE | `/v1/invoices/{id}` | Delete invoice | Yes |
 
-### AI Extraction & Generation
+### AI Extraction
 
 | Method | Endpoint | Description | Auth Required |
 |--------|----------|-------------|---------------|
-| POST | `/v1/extract-job-details` | Extract data from text/image | Yes |
-| POST | `/v1/generate-invoice` | Generate invoice from extraction | Yes |
+| POST | `/v1/extract-job-details` | Extract data from text/image | No |
 
 ### Payments & Subscriptions
 

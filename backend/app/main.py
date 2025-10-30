@@ -7,7 +7,6 @@ from app.api.v1.users import router as users_router
 from app.api.v1.clients import router as clients_router
 from app.api.v1.invoices import router as invoices_router
 from app.api.v1.extraction import router as extraction_router
-from app.api.v1.generate import router as generate_router
 from app.api.v1.reminders import router as reminders_router
 from app.api.v1.payments import router as payments_router
 from app.db.session import Base, engine
@@ -37,7 +36,6 @@ app.include_router(users_router, prefix="/v1", tags=["users"])
 app.include_router(clients_router, prefix="/v1", tags=["clients"]) 
 app.include_router(invoices_router, prefix="/v1", tags=["invoices"]) 
 app.include_router(extraction_router, prefix="/v1", tags=["extraction"]) 
-app.include_router(generate_router, prefix="/v1", tags=["invoice-generation"]) 
 app.include_router(reminders_router, prefix="/v1", tags=["reminders"]) 
 app.include_router(payments_router, prefix="/v1/payments", tags=["payments"]) 
 

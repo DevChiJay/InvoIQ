@@ -1,8 +1,10 @@
 from typing import List
 from decimal import Decimal, ROUND_HALF_UP
 from datetime import date
+import datetime as dt
 from fastapi import APIRouter, Depends, HTTPException, status, Response
 from sqlalchemy.orm import Session
+from sqlalchemy.exc import IntegrityError
 
 from app.dependencies.auth import get_current_user
 from app.db.session import get_db
@@ -71,10 +73,34 @@ def create_invoice(payload: InvoiceCreate, db: Session = Depends(get_db), curren
     if not client or client.user_id != current_user.id:
         raise HTTPException(status_code=404, detail="Client not found")
 
+    # Generate invoice number if not provided
+    number = payload.number
+    if not number:
+        today = dt.date.today()
+        # Count existing invoices issued today for sequence
+        count_today = (
+            db.query(Invoice)
+            .filter(Invoice.user_id == current_user.id, Invoice.issued_date == today)
+            .count()
+        )
+        number = f"INV-{today:%Y%m%d}-{count_today + 1:03d}"
+
+    # Check for existing invoice with same number
+    existing_invoice = (
+        db.query(Invoice)
+        .filter(Invoice.user_id == current_user.id, Invoice.number == number)
+        .first()
+    )
+    if existing_invoice:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Invoice number '{number}' already exists. Please use a different number."
+        )
+
     invoice = Invoice(
         user_id=current_user.id,
         client_id=payload.client_id,
-        number=payload.number,
+        number=number,
         status=payload.status or "draft",
         issued_date=payload.issued_date,
         due_date=payload.due_date,
@@ -82,8 +108,16 @@ def create_invoice(payload: InvoiceCreate, db: Session = Depends(get_db), curren
         tax=payload.tax,
         total=payload.total,
     )
-    db.add(invoice)
-    db.flush()  # get invoice.id before adding items
+    
+    try:
+        db.add(invoice)
+        db.flush()  # get invoice.id before adding items
+    except IntegrityError:
+        db.rollback()
+        raise HTTPException(
+            status_code=400,
+            detail=f"Invoice number '{number}' already exists. Please use a different number."
+        )
 
     if payload.items:
         for item in payload.items:
