@@ -144,23 +144,17 @@ export const extractionAPI = {
 };
 
 export const paymentsAPI = {
-  createSubscription: (provider: 'paystack' | 'stripe' = 'paystack', currency: string = 'USD', callback_url?: string) =>
-    api.post<{ payment_url: string; reference: string }>('/v1/payments/subscription/create', { 
-      provider, 
-      currency,
-      callback_url 
-    }),
+  createSubscription: (data: { provider: 'paystack' | 'stripe'; currency: string; callback_url?: string }) =>
+    api.post<{ payment_url: string; reference: string }>('/v1/payments/subscription/create', data),
   
-  verifyPayment: (reference: string, provider: 'paystack' | 'stripe' = 'paystack') =>
-    api.post('/v1/payments/subscription/verify', { reference, provider }),
+  verifyPayment: (data: { reference: string; provider: 'paystack' | 'stripe' }) =>
+    api.post<{ message: string; is_pro: boolean }>('/v1/payments/subscription/verify', data),
   
   getSubscriptionStatus: () =>
     api.get<SubscriptionStatus>('/v1/payments/subscription/status'),
-};
-
-export const remindersAPI = {
-  send: (invoice_id: number) =>
-    api.post('/v1/send-reminder', null, { params: { invoice_id } }),
+  
+  sendReminder: (invoice_id: number) =>
+    api.post<{ status: string; invoice_id: number }>('/v1/send-reminder', null, { params: { invoice_id } }),
 };
 
 // Demo extraction helper - uses the same endpoint as authenticated extraction

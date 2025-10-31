@@ -3,12 +3,14 @@
 import { useParams, useRouter } from 'next/navigation';
 import { useInvoice, useDeleteInvoice } from '@/lib/hooks/use-invoices';
 import { useClient } from '@/lib/hooks/use-clients';
+import { useSendReminder } from '@/lib/hooks/use-payments';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { InvoicePreview } from '@/components/invoices/invoice-preview';
 import { InvoicePDFViewer } from '@/components/invoices/invoice-pdf-viewer';
-import { Pencil, Trash2, ArrowLeft } from 'lucide-react';
+import { ProFeatureGate } from '@/components/payments/pro-feature-gate';
+import { Pencil, Trash2, ArrowLeft, Bell } from 'lucide-react';
 import Link from 'next/link';
 import { formatRelativeDate } from '@/lib/format';
 import { toast } from 'sonner';
@@ -20,6 +22,7 @@ export default function InvoiceDetailPage() {
   const { data: invoice, isLoading } = useInvoice(invoiceId);
   const { data: client } = useClient(invoice?.client_id || 0);
   const deleteInvoice = useDeleteInvoice();
+  const sendReminder = useSendReminder();
 
   const handleDelete = () => {
     toast.promise(
@@ -36,6 +39,17 @@ export default function InvoiceDetailPage() {
         loading: 'Deleting invoice...',
         success: 'Invoice deleted successfully',
         error: 'Failed to delete invoice',
+      }
+    );
+  };
+
+  const handleSendReminder = () => {
+    toast.promise(
+      sendReminder.mutateAsync(invoiceId),
+      {
+        loading: 'Sending reminder email...',
+        success: 'Reminder sent to client successfully',
+        error: 'Failed to send reminder. Please try again.',
       }
     );
   };
@@ -130,6 +144,17 @@ export default function InvoiceDetailPage() {
           </div>
         </div>
         <div className="flex flex-wrap gap-2">
+          <ProFeatureGate feature="Email reminders">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleSendReminder}
+              disabled={sendReminder.isPending || invoice.status === 'paid'}
+            >
+              <Bell className="mr-2 h-4 w-4" />
+              {sendReminder.isPending ? 'Sending...' : 'Send Reminder'}
+            </Button>
+          </ProFeatureGate>
           <Button variant="outline" size="sm" asChild>
             <Link href={`/dashboard/invoices/${invoice.id}/edit`}>
               <Pencil className="mr-2 h-4 w-4" />

@@ -162,8 +162,11 @@ export interface ExtractionResponse {
 // Payment Types
 export interface SubscriptionStatus {
   is_pro: boolean;
-  subscription_status?: string;
-  subscription_expires_at?: string;
+  subscription_status: string | null;
+  subscription_provider: string | null;
+  subscription_start_date: string | null;
+  subscription_end_date: string | null;
+  days_remaining: number | null;
 }
 
 // Dashboard Types
