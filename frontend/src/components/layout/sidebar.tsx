@@ -30,7 +30,10 @@ export default function Sidebar() {
         <nav className="flex flex-1 flex-col pt-8">
           <ul role="list" className="flex flex-1 flex-col gap-y-2">
             {navigation.map((item) => {
-              const isActive = pathname === item.href || pathname.startsWith(item.href + '/');
+              // For Dashboard, only match exact path, for others allow sub-routes
+              const isActive = item.href === '/dashboard' 
+                ? pathname === item.href 
+                : pathname === item.href || pathname.startsWith(item.href + '/');
               return (
                 <li key={item.name}>
                   <Link

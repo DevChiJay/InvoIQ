@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
@@ -28,13 +28,25 @@ export function ProfileSettingsForm() {
     register,
     handleSubmit,
     formState: { errors, isDirty },
+    reset,
   } = useForm<ProfileFormData>({
     defaultValues: {
-      full_name: user?.full_name || "",
-      email: user?.email || "",
-      phone: user?.phone || "",
+      full_name: "",
+      email: "",
+      phone: "",
     },
   });
+
+  // Update form when user data changes
+  useEffect(() => {
+    if (user) {
+      reset({
+        full_name: user.full_name || "",
+        email: user.email || "",
+        phone: user.phone || "",
+      });
+    }
+  }, [user, reset]);
 
   const updateProfileMutation = useMutation({
     mutationFn: usersAPI.updateProfile,

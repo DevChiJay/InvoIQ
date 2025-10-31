@@ -83,7 +83,10 @@ export default function MobileNav() {
           <nav className="flex-1 overflow-y-auto px-4 py-6">
             <ul role="list" className="flex flex-col gap-y-2">
               {navigation.map((item) => {
-                const isActive = pathname === item.href || pathname.startsWith(item.href + '/');
+                // For Dashboard, only match exact path, for others allow sub-routes
+                const isActive = item.href === '/dashboard' 
+                  ? pathname === item.href 
+                  : pathname === item.href || pathname.startsWith(item.href + '/');
                 return (
                   <li key={item.name}>
                     <Link

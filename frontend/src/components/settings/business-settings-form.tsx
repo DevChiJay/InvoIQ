@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
@@ -29,14 +29,27 @@ export function BusinessSettingsForm() {
     register,
     handleSubmit,
     formState: { errors, isDirty },
+    reset,
   } = useForm<BusinessFormData>({
     defaultValues: {
-      company_name: user?.company_name || "",
-      company_address: user?.company_address || "",
-      tax_id: user?.tax_id || "",
-      website: user?.website || "",
+      company_name: "",
+      company_address: "",
+      tax_id: "",
+      website: "",
     },
   });
+
+  // Update form when user data changes
+  useEffect(() => {
+    if (user) {
+      reset({
+        company_name: user.company_name || "",
+        company_address: user.company_address || "",
+        tax_id: user.tax_id || "",
+        website: user.website || "",
+      });
+    }
+  }, [user, reset]);
 
   const updateBusinessMutation = useMutation({
     mutationFn: usersAPI.updateProfile,
