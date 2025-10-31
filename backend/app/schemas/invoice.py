@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import date, datetime
 from typing import List, Optional
 from pydantic import BaseModel
 from decimal import Decimal
@@ -72,6 +72,8 @@ class InvoiceOut(InvoiceBase):
     pdf_url: str | None = None
     payment_link: str | None = None  # Optional user-provided payment link
     user_business_info: Optional[UserBusinessInfo] = None  # Business details for invoice display
+    created_at: datetime
+    updated_at: datetime
 
     class Config:
         from_attributes = True

@@ -160,20 +160,38 @@ export function InvoiceList({ invoices, isLoading, onDelete }: InvoiceListProps)
           </TableHeader>
           <TableBody>
             {filteredInvoices.map((invoice) => (
-              <TableRow key={invoice.id}>
-                <TableCell className="font-medium">{invoice.number}</TableCell>
-                <TableCell>{invoice.client?.name || `Client #${invoice.client_id}`}</TableCell>
-                <TableCell>
-                  {formatRelativeDate(invoice.issued_date)}
+              <TableRow key={invoice.id} className="cursor-pointer">
+                <TableCell className="font-medium">
+                  <Link href={`/dashboard/invoices/${invoice.id}`} className="block">
+                    {invoice.number}
+                  </Link>
                 </TableCell>
-                <TableCell>{formatSimpleDate(invoice.due_date)}</TableCell>
                 <TableCell>
-                  <Badge variant={getStatusBadgeVariant(invoice.status)}>
-                    {invoice.status}
-                  </Badge>
+                  <Link href={`/dashboard/invoices/${invoice.id}`} className="block">
+                    {invoice.client?.name || `Client #${invoice.client_id}`}
+                  </Link>
+                </TableCell>
+                <TableCell>
+                  <Link href={`/dashboard/invoices/${invoice.id}`} className="block">
+                    {formatRelativeDate(invoice.issued_date)}
+                  </Link>
+                </TableCell>
+                <TableCell>
+                  <Link href={`/dashboard/invoices/${invoice.id}`} className="block">
+                    {formatSimpleDate(invoice.due_date)}
+                  </Link>
+                </TableCell>
+                <TableCell>
+                  <Link href={`/dashboard/invoices/${invoice.id}`} className="block">
+                    <Badge variant={getStatusBadgeVariant(invoice.status)}>
+                      {invoice.status}
+                    </Badge>
+                  </Link>
                 </TableCell>
                 <TableCell className="text-right font-semibold">
-                  {formatCurrency(invoice.total)}
+                  <Link href={`/dashboard/invoices/${invoice.id}`} className="block">
+                    {formatCurrency(invoice.total)}
+                  </Link>
                 </TableCell>
                 <TableCell className="text-right">
                   <div className="flex items-center justify-end gap-2">
@@ -218,6 +236,10 @@ export function InvoiceList({ invoices, isLoading, onDelete }: InvoiceListProps)
                   <Badge variant={getStatusBadgeVariant(invoice.status)}>
                     {invoice.status}
                   </Badge>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted-foreground">Created:</span>
+                  <span>{formatRelativeDate(invoice.created_at)}</span>
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-muted-foreground">Due:</span>

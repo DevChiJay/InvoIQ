@@ -3,7 +3,7 @@
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-import { formatCurrency, formatSimpleDate } from '@/lib/format';
+import { formatCurrency, formatSimpleDate, formatRelativeDate } from '@/lib/format';
 import { Building2 } from 'lucide-react';
 import type { Invoice, Client } from '@/types/api';
 
@@ -105,6 +105,10 @@ export function InvoicePreview({
           <div>
             <h3 className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-3">Invoice Details</h3>
             <div className="space-y-2">
+              <div className="flex justify-between text-sm">
+                <span className="text-muted-foreground">Created:</span>
+                <span className="font-semibold text-foreground">{formatRelativeDate(invoice.created_at)}</span>
+              </div>
               <div className="flex justify-between text-sm">
                 <span className="text-muted-foreground">Issue Date:</span>
                 <span className="font-semibold text-foreground">{formatSimpleDate(invoice.issued_date)}</span>

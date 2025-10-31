@@ -143,7 +143,7 @@ export default function InvoiceDetailPage() {
               </Badge>
             </div>
             <p className="text-sm text-muted-foreground">
-              Created {formatRelativeDate(invoice.issued_date)}
+              Created {formatRelativeDate(invoice.created_at)}
             </p>
           </div>
         </div>

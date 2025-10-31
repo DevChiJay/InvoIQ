@@ -106,7 +106,7 @@ export function RecentInvoices({ invoices, isLoading }: RecentInvoicesProps) {
                 </div>
                 <p className="text-sm text-muted-foreground">
                   {invoice.client?.name || `Client #${invoice.client_id}`} •{' '}
-                  {formatRelativeDate(invoice.issued_date)}
+                  {formatRelativeDate(invoice.created_at)}
                 </p>
               </div>
               <div className="text-right">

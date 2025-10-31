@@ -1,5 +1,5 @@
-from datetime import date
-from sqlalchemy import Column, Integer, String, ForeignKey, Date, Numeric, JSON, Text, UniqueConstraint
+from datetime import date, datetime
+from sqlalchemy import Column, Integer, String, ForeignKey, Date, Numeric, JSON, Text, UniqueConstraint, DateTime
 from sqlalchemy.orm import relationship
 
 from app.db.session import Base
@@ -28,6 +28,9 @@ class Invoice(Base):
     pdf_url = Column(String, nullable=True)
     payment_link = Column(String, nullable=True)  # Optional user-provided payment link
     notes = Column(Text, nullable=True)  # Invoice notes or payment instructions
+
+    created_at = Column(DateTime, nullable=False, default=datetime.utcnow)
+    updated_at = Column(DateTime, nullable=False, default=datetime.utcnow, onupdate=datetime.utcnow)
 
     # Relationships
     client = relationship("Client", back_populates="invoices")
