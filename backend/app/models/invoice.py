@@ -27,7 +27,7 @@ class Invoice(Base):
 
     pdf_url = Column(String, nullable=True)
     payment_link = Column(String, nullable=True)  # Optional user-provided payment link
-    notes = Column(JSON, nullable=True)  # renamed from metadata to avoid SQLAlchemy conflict
+    notes = Column(Text, nullable=True)  # Invoice notes or payment instructions
 
     # Relationships
     client = relationship("Client", back_populates="invoices")

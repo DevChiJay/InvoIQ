@@ -84,7 +84,10 @@ export interface InvoiceCreate {
   issued_date: string;
   due_date: string;
   items: InvoiceItem[];
+  subtotal?: number;
   tax?: number;
+  total?: number;
+  status?: 'draft' | 'sent' | 'paid' | 'overdue';
   notes?: string;
 }
 
@@ -93,7 +96,9 @@ export interface InvoiceUpdate {
   issued_date?: string;
   due_date?: string;
   items?: InvoiceItem[];
+  subtotal?: number;
   tax?: number;
+  total?: number;
   status?: 'draft' | 'sent' | 'paid' | 'overdue';
   notes?: string;
 }

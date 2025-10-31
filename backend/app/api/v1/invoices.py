@@ -107,6 +107,7 @@ def create_invoice(payload: InvoiceCreate, db: Session = Depends(get_db), curren
         subtotal=payload.subtotal,
         tax=payload.tax,
         total=payload.total,
+        notes=payload.notes,
     )
     
     try:
@@ -167,15 +168,14 @@ def update_invoice(invoice_id: int, payload: InvoiceUpdate, db: Session = Depend
 
     # Replace items if provided
     if payload.items is not None:
-        # Delete existing items
-        for item in list(invoice.items):
-            db.delete(item)
+        # Delete existing items - use query to avoid session tracking issues
+        db.query(InvoiceItem).filter(InvoiceItem.invoice_id == invoice_id).delete()
         db.flush()
+        
         # Add new items
         for item in payload.items:
             _add_item(db, invoice, item)
 
-    db.add(invoice)
     db.commit()
     db.refresh(invoice)
     return invoice

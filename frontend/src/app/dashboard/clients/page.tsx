@@ -3,6 +3,7 @@
 import { useClients, useDeleteClient } from '@/lib/hooks/use-clients';
 import { ClientList } from '@/components/clients/client-list';
 import { Button } from '@/components/ui/button';
+import { ConfirmDialog } from '@/components/ui/confirm-dialog';
 import { UserPlus } from 'lucide-react';
 import { useState } from 'react';
 import { ClientFormModal } from '@/components/clients/client-form-modal';
@@ -12,11 +13,20 @@ export default function ClientsPage() {
   const { data: clients, isLoading } = useClients();
   const deleteClient = useDeleteClient();
   const [isClientModalOpen, setIsClientModalOpen] = useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [clientToDelete, setClientToDelete] = useState<{ id: number; name: string } | null>(null);
 
-  const handleDelete = (id: number) => {
+  const handleDeleteClick = (id: number, name: string) => {
+    setClientToDelete({ id, name });
+    setDeleteDialogOpen(true);
+  };
+
+  const handleDelete = () => {
+    if (!clientToDelete) return;
+
     toast.promise(
       new Promise((resolve, reject) => {
-        deleteClient.mutate(id, {
+        deleteClient.mutate(clientToDelete.id, {
           onSuccess: resolve,
           onError: reject,
         });
@@ -52,7 +62,19 @@ export default function ClientsPage() {
       <ClientList
         clients={clients || []}
         isLoading={isLoading}
-        onDelete={handleDelete}
+        onDelete={handleDeleteClick}
+      />
+
+      {/* Delete Confirmation Dialog */}
+      <ConfirmDialog
+        open={deleteDialogOpen}
+        onClose={() => setDeleteDialogOpen(false)}
+        onConfirm={handleDelete}
+        title="Delete Client"
+        description={`Are you sure you want to delete ${clientToDelete?.name}? All associated data will be permanently removed.`}
+        confirmText="Delete"
+        cancelText="Cancel"
+        variant="destructive"
       />
     </div>
   );

@@ -54,3 +54,28 @@ export const formatCurrency = (amount: number, currency: string = 'USD'): string
     currency,
   }).format(amount);
 };
+
+/**
+ * Get badge variant for invoice status
+ */
+export const getStatusVariant = (status: string): 'default' | 'secondary' | 'destructive' | 'outline' => {
+  switch (status) {
+    case 'paid':
+      return 'default'; // Green
+    case 'sent':
+      return 'secondary'; // Blue
+    case 'overdue':
+      return 'destructive'; // Red
+    case 'draft':
+      return 'outline'; // Gray
+    default:
+      return 'outline';
+  }
+};
+
+/**
+ * Get display text for invoice status
+ */
+export const formatStatus = (status: string): string => {
+  return status.charAt(0).toUpperCase() + status.slice(1);
+};

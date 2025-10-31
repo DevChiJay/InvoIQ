@@ -21,7 +21,7 @@ import type { Invoice } from '@/types/api';
 interface InvoiceListProps {
   invoices: Invoice[];
   isLoading?: boolean;
-  onDelete?: (id: number) => void;
+  onDelete?: (id: number, number: string) => void;
 }
 
 export function InvoiceList({ invoices, isLoading, onDelete }: InvoiceListProps) {
@@ -190,7 +190,7 @@ export function InvoiceList({ invoices, isLoading, onDelete }: InvoiceListProps)
                     <Button
                       variant="ghost"
                       size="sm"
-                      onClick={() => onDelete?.(invoice.id)}
+                      onClick={() => onDelete?.(invoice.id, invoice.number)}
                     >
                       <Trash2 className="h-4 w-4 text-destructive" />
                     </Button>
@@ -243,7 +243,7 @@ export function InvoiceList({ invoices, isLoading, onDelete }: InvoiceListProps)
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={() => onDelete?.(invoice.id)}
+                    onClick={() => onDelete?.(invoice.id, invoice.number)}
                   >
                     <Trash2 className="h-4 w-4 text-destructive" />
                   </Button>

@@ -19,7 +19,7 @@ import type { Client } from '@/types/api';
 interface ClientListProps {
   clients: Client[];
   isLoading?: boolean;
-  onDelete?: (id: number) => void;
+  onDelete?: (id: number, name: string) => void;
 }
 
 export function ClientList({ clients, isLoading, onDelete }: ClientListProps) {
@@ -141,7 +141,7 @@ export function ClientList({ clients, isLoading, onDelete }: ClientListProps) {
                     <Button
                       variant="ghost"
                       size="sm"
-                      onClick={() => onDelete?.(client.id)}
+                      onClick={() => onDelete?.(client.id, client.name)}
                     >
                       <Trash2 className="h-4 w-4 text-destructive" />
                     </Button>
@@ -194,7 +194,7 @@ export function ClientList({ clients, isLoading, onDelete }: ClientListProps) {
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={() => onDelete?.(client.id)}
+                    onClick={() => onDelete?.(client.id, client.name)}
                   >
                     <Trash2 className="h-4 w-4 text-destructive" />
                   </Button>

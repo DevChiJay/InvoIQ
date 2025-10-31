@@ -1,8 +1,10 @@
 'use client';
 
+import { useState } from 'react';
 import { useInvoices, useDeleteInvoice } from '@/lib/hooks/use-invoices';
 import { InvoiceList } from '@/components/invoices/invoice-list';
 import { Button } from '@/components/ui/button';
+import { ConfirmDialog } from '@/components/ui/confirm-dialog';
 import { Plus } from 'lucide-react';
 import Link from 'next/link';
 import { toast } from 'sonner';
@@ -10,11 +12,20 @@ import { toast } from 'sonner';
 export default function InvoicesPage() {
   const { data: invoices, isLoading } = useInvoices();
   const deleteInvoice = useDeleteInvoice();
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [invoiceToDelete, setInvoiceToDelete] = useState<{ id: number; number: string } | null>(null);
 
-  const handleDelete = (id: number) => {
+  const handleDeleteClick = (id: number, number: string) => {
+    setInvoiceToDelete({ id, number });
+    setDeleteDialogOpen(true);
+  };
+
+  const handleDelete = () => {
+    if (!invoiceToDelete) return;
+
     toast.promise(
       new Promise((resolve, reject) => {
-        deleteInvoice.mutate(id, {
+        deleteInvoice.mutate(invoiceToDelete.id, {
           onSuccess: resolve,
           onError: reject,
         });
@@ -47,7 +58,19 @@ export default function InvoicesPage() {
       <InvoiceList
         invoices={invoices || []}
         isLoading={isLoading}
-        onDelete={handleDelete}
+        onDelete={handleDeleteClick}
+      />
+
+      {/* Delete Confirmation Dialog */}
+      <ConfirmDialog
+        open={deleteDialogOpen}
+        onClose={() => setDeleteDialogOpen(false)}
+        onConfirm={handleDelete}
+        title="Delete Invoice"
+        description={`Are you sure you want to delete invoice ${invoiceToDelete?.number}? This action cannot be undone.`}
+        confirmText="Delete"
+        cancelText="Cancel"
+        variant="destructive"
       />
     </div>
   );

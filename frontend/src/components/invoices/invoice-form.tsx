@@ -6,6 +6,13 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { Loader2, Plus, Trash2, UserPlus } from 'lucide-react';
 import { ClientFormModal } from '@/components/clients/client-form-modal';
 import type { Invoice, InvoiceCreate, InvoiceUpdate, InvoiceItem, Client } from '@/types/api';
@@ -40,37 +47,61 @@ export function InvoiceForm({
   const extractedData = useMemo(() => {
     if (invoice || isEdit) return null;
     
-    const extractedInvoiceData = sessionStorage.getItem('extractedInvoiceData');
-    if (!extractedInvoiceData) return null;
+    const extractedDataStr = sessionStorage.getItem('extractedData');
+    if (!extractedDataStr) return null;
 
     try {
-      const data = JSON.parse(extractedInvoiceData);
+      const data = JSON.parse(extractedDataStr);
       // Clear after reading
-      sessionStorage.removeItem('extractedInvoiceData');
-      sessionStorage.removeItem('extractedClientData');
+      sessionStorage.removeItem('extractedData');
       return data;
     } catch (error) {
-      console.error('Failed to parse extracted invoice data:', error);
+      console.error('Failed to parse extracted data:', error);
       return null;
     }
   }, [invoice, isEdit]);
 
+  // Try to match client by name or email if extraction data exists
+  const matchedClient = useMemo(() => {
+    if (!extractedData?.client || !clients) return null;
+    
+    const clientName = extractedData.client.name?.toLowerCase();
+    const clientEmail = extractedData.client.email?.toLowerCase();
+    
+    return clients.find(
+      (c) => 
+        (clientName && c.name.toLowerCase() === clientName) ||
+        (clientEmail && c.email?.toLowerCase() === clientEmail)
+    );
+  }, [extractedData, clients]);
+
   const [formData, setFormData] = useState({
-    client_id: invoice?.client_id || extractedData?.client_id || preselectedClientId || 0,
+    client_id: invoice?.client_id || matchedClient?.id || preselectedClientId || 0,
     issued_date: invoice?.issued_date
       ? new Date(invoice.issued_date).toISOString().split('T')[0]
-      : extractedData?.issued_date || new Date().toISOString().split('T')[0],
+      : extractedData?.invoice_details?.issued_date || new Date().toISOString().split('T')[0],
     due_date: invoice?.due_date
       ? new Date(invoice.due_date).toISOString().split('T')[0]
-      : extractedData?.due_date || getDefaultDueDate(),
-    tax: invoice?.tax ?? extractedData?.tax ?? 0,
+      : extractedData?.invoice_details?.due_date || getDefaultDueDate(),
+    tax: invoice?.tax ?? extractedData?.financial?.tax ?? 0,
+    status: invoice?.status || 'draft' as const,
     notes: invoice?.notes || extractedData?.notes || '',
   });
 
   const [items, setItems] = useState<InvoiceItem[]>(
-    invoice?.items || 
-    (extractedData?.items && Array.isArray(extractedData.items) && extractedData.items.length > 0 
-      ? extractedData.items 
+    invoice?.items.map(item => ({
+      ...item,
+      quantity: Number(item.quantity),
+      unit_price: Number(item.unit_price),
+      amount: Number(item.amount),
+    })) || 
+    (extractedData?.line_items && Array.isArray(extractedData.line_items) && extractedData.line_items.length > 0 
+      ? extractedData.line_items.map((item: InvoiceItem) => ({
+          description: item.description || '',
+          quantity: Number(item.quantity) || 1,
+          unit_price: Number(item.unit_price) || 0,
+          amount: Number(item.amount) || Number(item.quantity || 1) * Number(item.unit_price || 0),
+        }))
       : [{ description: '', quantity: 1, unit_price: 0, amount: 0 }])
   );
 
@@ -136,7 +167,10 @@ export function InvoiceForm({
         issued_date: formData.issued_date,
         due_date: formData.due_date,
         items: items.filter((item) => item.description.trim()),
+        subtotal: subtotal,
         tax: formData.tax,
+        total: total,
+        status: formData.status,
         notes: formData.notes || undefined,
       };
 
@@ -245,6 +279,50 @@ export function InvoiceForm({
               )}
             </div>
           </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="status">
+              Status <span className="text-destructive">*</span>
+            </Label>
+            <Select
+              value={formData.status}
+              onValueChange={(value) => handleChange('status', value)}
+              disabled={isLoading}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Select status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="draft">
+                  <div className="flex items-center gap-2">
+                    <div className="h-2 w-2 rounded-full bg-muted-foreground" />
+                    <span>Draft</span>
+                  </div>
+                </SelectItem>
+                <SelectItem value="sent">
+                  <div className="flex items-center gap-2">
+                    <div className="h-2 w-2 rounded-full bg-blue-500" />
+                    <span>Sent</span>
+                  </div>
+                </SelectItem>
+                <SelectItem value="paid">
+                  <div className="flex items-center gap-2">
+                    <div className="h-2 w-2 rounded-full bg-green-500" />
+                    <span>Paid</span>
+                  </div>
+                </SelectItem>
+                <SelectItem value="overdue">
+                  <div className="flex items-center gap-2">
+                    <div className="h-2 w-2 rounded-full bg-red-500" />
+                    <span>Overdue</span>
+                  </div>
+                </SelectItem>
+              </SelectContent>
+            </Select>
+            {errors.status && (
+              <p className="text-sm text-destructive">{errors.status}</p>
+            )}
+          </div>
         </CardContent>
       </Card>
 
@@ -304,7 +382,7 @@ export function InvoiceForm({
               <div className="w-full md:w-32 space-y-2">
                 <Label>Amount</Label>
                 <Input
-                  value={item.amount.toFixed(2)}
+                  value={Number(item.amount).toFixed(2)}
                   disabled
                   className="bg-muted"
                 />

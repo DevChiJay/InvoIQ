@@ -32,6 +32,7 @@ class InvoiceBase(BaseModel):
     subtotal: Decimal | None = None
     tax: Decimal | None = None
     total: Decimal | None = None
+    notes: str | None = None
 
 
 class InvoiceCreate(InvoiceBase):
@@ -46,6 +47,7 @@ class InvoiceUpdate(BaseModel):
     subtotal: Decimal | None = None
     tax: Decimal | None = None
     total: Decimal | None = None
+    notes: str | None = None
     items: List[InvoiceItemCreate] | None = None  # replace items if provided
 
 

@@ -15,11 +15,10 @@ import { formatCurrency } from '@/lib/format';
 interface ParsedDataEditorProps {
   data: ExtractedData;
   onChange: (data: ExtractedData) => void;
-  onCreateInvoice: () => void;
-  isCreating?: boolean;
+  onContinue: () => void;
 }
 
-export function ParsedDataEditor({ data, onChange, onCreateInvoice, isCreating }: ParsedDataEditorProps) {
+export function ParsedDataEditor({ data, onChange, onContinue }: ParsedDataEditorProps) {
   const [editedData, setEditedData] = useState<ExtractedData>(data);
 
   // Update when data prop changes
@@ -334,14 +333,14 @@ export function ParsedDataEditor({ data, onChange, onCreateInvoice, isCreating }
         </CardContent>
       </Card>
 
-      {/* Create Invoice Button */}
+      {/* Continue to Create Invoice Button */}
       <Button
-        onClick={onCreateInvoice}
+        onClick={onContinue}
         size="lg"
         className="w-full"
-        disabled={isCreating || !editedData.client?.name || !editedData.client?.email || (editedData.line_items?.length || 0) === 0}
+        disabled={!editedData.client?.name || (editedData.line_items?.length || 0) === 0}
       >
-        {isCreating ? 'Creating Invoice...' : 'Create Invoice'}
+        Continue to Create Invoice
       </Button>
     </div>
   );

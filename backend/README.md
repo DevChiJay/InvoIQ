@@ -44,6 +44,8 @@ AI-powered invoice and client management system backend built with FastAPI, SQLA
    ```
 
 5. **Configure environment variables** (see Environment Variables section)
+   
+   **Important for Supabase users:** See [DATABASE_SETUP.md](./DATABASE_SETUP.md) for detailed connection configuration
 
 6. **Run the application**
    ```bash
@@ -83,9 +85,18 @@ STRIPE_SECRET_KEY=your-stripe-secret-key
 ```
 
 ### Production Database (Supabase)
+
+**⚠️ IMPORTANT:** Use Transaction Mode pooler (port 6543) to avoid connection limits!
+
 ```env
-DATABASE_URL=postgresql://user:password@db.project.supabase.co:5432/postgres?sslmode=require
+# Transaction Mode (RECOMMENDED)
+DATABASE_URL=postgresql://postgres.project:[PASSWORD]@aws-0-us-east-2.pooler.supabase.com:6543/postgres
+
+# Session Mode (NOT RECOMMENDED - causes "max clients reached" errors)
+# DATABASE_URL=postgresql://postgres.project:[PASSWORD]@aws-0-us-east-2.pooler.supabase.com:5432/postgres
 ```
+
+📖 **See [DATABASE_SETUP.md](./DATABASE_SETUP.md) for complete database setup guide**
 
 ## 📚 API Documentation
 

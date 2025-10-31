@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { useInvoice, useDeleteInvoice } from '@/lib/hooks/use-invoices';
 import { useClient } from '@/lib/hooks/use-clients';
@@ -7,6 +8,7 @@ import { useSendReminder } from '@/lib/hooks/use-payments';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { ConfirmDialog } from '@/components/ui/confirm-dialog';
 import { InvoicePreview } from '@/components/invoices/invoice-preview';
 import { InvoicePDFViewer } from '@/components/invoices/invoice-pdf-viewer';
 import { ProFeatureGate } from '@/components/payments/pro-feature-gate';
@@ -23,6 +25,7 @@ export default function InvoiceDetailPage() {
   const { data: client } = useClient(invoice?.client_id || 0);
   const deleteInvoice = useDeleteInvoice();
   const sendReminder = useSendReminder();
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
   const handleDelete = () => {
     toast.promise(
@@ -164,7 +167,7 @@ export default function InvoiceDetailPage() {
           <Button 
             variant="destructive" 
             size="sm" 
-            onClick={handleDelete} 
+            onClick={() => setShowDeleteDialog(true)} 
             disabled={deleteInvoice.isPending}
           >
             <Trash2 className="mr-2 h-4 w-4" />
@@ -178,6 +181,18 @@ export default function InvoiceDetailPage() {
 
       {/* PDF Viewer */}
       <InvoicePDFViewer invoiceId={invoice.id} />
+
+      {/* Delete Confirmation Dialog */}
+      <ConfirmDialog
+        open={showDeleteDialog}
+        onClose={() => setShowDeleteDialog(false)}
+        onConfirm={handleDelete}
+        title="Delete Invoice"
+        description={`Are you sure you want to delete invoice ${invoice.number}? This action cannot be undone.`}
+        confirmText="Delete"
+        cancelText="Cancel"
+        variant="destructive"
+      />
     </div>
   );
 }

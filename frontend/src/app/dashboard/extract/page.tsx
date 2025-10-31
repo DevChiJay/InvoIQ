@@ -5,23 +5,19 @@ import { useRouter } from 'next/navigation';
 import { UploadChat } from '@/components/extraction/upload-chat';
 import { ParsedDataEditor } from '@/components/extraction/parsed-data-editor';
 import { useExtraction } from '@/lib/hooks/use-extraction';
-import { useCreateInvoice } from '@/lib/hooks/use-invoices';
-import { useClients } from '@/lib/hooks/use-clients';
 import { transformExtractionResponse } from '@/lib/extraction-transformer';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, Sparkles } from 'lucide-react';
 import Link from 'next/link';
 import { toast } from 'sonner';
-import type { ExtractedData, InvoiceCreate } from '@/types/api';
+import type { ExtractedData } from '@/types/api';
 
 export default function ExtractPage() {
   const router = useRouter();
   const [extractedData, setExtractedData] = useState<ExtractedData | null>(null);
   
   const extraction = useExtraction();
-  const createInvoice = useCreateInvoice();
-  const { data: clients } = useClients();
 
   const handleExtract = async (formData: FormData) => {
     toast.promise(
@@ -45,53 +41,11 @@ export default function ExtractPage() {
   const handleCreateInvoice = async () => {
     if (!extractedData) return;
 
-    // Check if client exists, otherwise we'll need to create one
-    const existingClient = clients?.find(
-      (c) => c.email?.toLowerCase() === extractedData.client?.email?.toLowerCase()
-    );
-
-    try {
-      const invoiceData: InvoiceCreate = {
-        client_id: existingClient?.id || 0, // Will need to handle client creation
-        issued_date: extractedData.invoice_details?.issued_date || new Date().toISOString().split('T')[0],
-        due_date: extractedData.invoice_details?.due_date || '',
-        items: (extractedData.line_items || []).map((item) => ({
-          description: item.description,
-          quantity: item.quantity,
-          unit_price: item.unit_price,
-          amount: item.amount || 0,
-        })),
-        tax: extractedData.financial?.tax || 0,
-        notes: extractedData.notes,
-      };
-
-      // If no existing client, redirect to invoice creation with pre-filled data
-      if (!existingClient) {
-        // Store extraction data in session storage for use in invoice creation
-        sessionStorage.setItem('extractedInvoiceData', JSON.stringify(invoiceData));
-        sessionStorage.setItem('extractedClientData', JSON.stringify(extractedData.client));
-        
-        toast.info('Client not found. Redirecting to create invoice with client...');
-        router.push('/dashboard/invoices/new?from=extraction');
-        return;
-      }
-
-      // Create invoice directly if client exists
-      toast.promise(
-        createInvoice.mutateAsync(invoiceData),
-        {
-          loading: 'Creating invoice...',
-          success: (response) => {
-            const newInvoice = response.data;
-            router.push(`/dashboard/invoices/${newInvoice.id}`);
-            return 'Invoice created successfully!';
-          },
-          error: 'Failed to create invoice. Please try again.',
-        }
-      );
-    } catch (error) {
-      console.error('Error creating invoice:', error);
-    }
+    // Store extraction data in session storage for use in invoice creation
+    sessionStorage.setItem('extractedData', JSON.stringify(extractedData));
+    
+    toast.success('Extraction complete! Redirecting to create invoice...');
+    router.push('/dashboard/invoices/new?from=extraction');
   };
 
   return (
@@ -157,8 +111,7 @@ export default function ExtractPage() {
           <ParsedDataEditor
             data={extractedData}
             onChange={handleDataChange}
-            onCreateInvoice={handleCreateInvoice}
-            isCreating={createInvoice.isPending}
+            onContinue={handleCreateInvoice}
           />
         </div>
       )}
