@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { useInvoice, useDeleteInvoice } from '@/lib/hooks/use-invoices';
 import { useClient } from '@/lib/hooks/use-clients';
@@ -26,6 +26,7 @@ export default function InvoiceDetailPage() {
   const deleteInvoice = useDeleteInvoice();
   const sendReminder = useSendReminder();
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const previewRef = useRef<HTMLDivElement>(null);
 
   const handleDelete = () => {
     toast.promise(
@@ -177,10 +178,12 @@ export default function InvoiceDetailPage() {
       </div>
 
       {/* Invoice Preview with Client Info */}
-      <InvoicePreview invoice={invoice} client={client} />
+      <div ref={previewRef}>
+        <InvoicePreview invoice={invoice} client={client} />
+      </div>
 
       {/* PDF Viewer */}
-      {client && <InvoicePDFViewer invoice={invoice} client={client} />}
+      {client && <InvoicePDFViewer invoice={invoice} client={client} previewRef={previewRef} />}
 
       {/* Delete Confirmation Dialog */}
       <ConfirmDialog

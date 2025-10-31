@@ -1,7 +1,22 @@
 from datetime import date
-from typing import List
+from typing import List, Optional
 from pydantic import BaseModel
 from decimal import Decimal
+
+
+class UserBusinessInfo(BaseModel):
+    """Subset of user business details for invoice display"""
+    full_name: Optional[str] = None
+    email: str
+    phone: Optional[str] = None
+    company_name: Optional[str] = None
+    company_logo_url: Optional[str] = None
+    company_address: Optional[str] = None
+    tax_id: Optional[str] = None
+    website: Optional[str] = None
+    
+    class Config:
+        from_attributes = True
 
 
 class InvoiceItemBase(BaseModel):
@@ -56,6 +71,7 @@ class InvoiceOut(InvoiceBase):
     items: List[InvoiceItemOut] = []
     pdf_url: str | None = None
     payment_link: str | None = None  # Optional user-provided payment link
+    user_business_info: Optional[UserBusinessInfo] = None  # Business details for invoice display
 
     class Config:
         from_attributes = True

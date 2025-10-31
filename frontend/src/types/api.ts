@@ -8,6 +8,25 @@ export interface User {
   subscription_status?: string;
   subscription_expires_at?: string;
   created_at: string;
+  // Business/Profile details
+  avatar_url?: string;
+  phone?: string;
+  company_name?: string;
+  company_logo_url?: string;
+  company_address?: string;
+  tax_id?: string;
+  website?: string;
+}
+
+export interface UserUpdate {
+  full_name?: string;
+  phone?: string;
+  avatar_url?: string;
+  company_name?: string;
+  company_logo_url?: string;
+  company_address?: string;
+  tax_id?: string;
+  website?: string;
 }
 
 export interface AuthResponse {
@@ -53,6 +72,17 @@ export interface ClientUpdate {
 }
 
 // Invoice Types
+export interface UserBusinessInfo {
+  full_name?: string;
+  email: string;
+  phone?: string;
+  company_name?: string;
+  company_logo_url?: string;
+  company_address?: string;
+  tax_id?: string;
+  website?: string;
+}
+
 export interface InvoiceItem {
   description: string;
   quantity: number;
@@ -75,6 +105,7 @@ export interface Invoice {
   notes?: string;
   payment_link?: string;
   user_id: number;
+  user_business_info?: UserBusinessInfo;
   created_at: string;
   updated_at: string;
 }

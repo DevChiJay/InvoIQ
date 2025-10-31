@@ -1,6 +1,7 @@
 import axios from 'axios';
 import type {
   User,
+  UserUpdate,
   Client,
   ClientCreate,
   ClientUpdate,
@@ -78,6 +79,31 @@ export const authAPI = {
   
   getCurrentUser: () =>
     api.get<User>('/v1/me'),
+};
+
+export const usersAPI = {
+  updateProfile: (data: UserUpdate) =>
+    api.patch<User>('/v1/me', data),
+  
+  uploadAvatar: (file: File) => {
+    const formData = new FormData();
+    formData.append('file', file);
+    return api.post<{ url: string; message: string }>('/v1/upload-avatar', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+  },
+  
+  uploadLogo: (file: File) => {
+    const formData = new FormData();
+    formData.append('file', file);
+    return api.post<{ url: string; message: string }>('/v1/upload-logo', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+  },
 };
 
 export const clientsAPI = {

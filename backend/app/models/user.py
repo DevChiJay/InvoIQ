@@ -19,3 +19,12 @@ class User(Base):
     subscription_start_date = Column(DateTime, nullable=True)
     subscription_end_date = Column(DateTime, nullable=True)
     subscription_updated_at = Column(DateTime, nullable=True, default=datetime.utcnow)
+    
+    # Business/Profile details
+    avatar_url = Column(String, nullable=True)
+    phone = Column(String, nullable=True)
+    company_name = Column(String, nullable=True)
+    company_logo_url = Column(String, nullable=True)
+    company_address = Column(String, nullable=True)
+    tax_id = Column(String, nullable=True)  # VAT/Tax ID
+    website = Column(String, nullable=True)

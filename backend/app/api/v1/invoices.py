@@ -11,12 +11,27 @@ from app.db.session import get_db
 from app.models.user import User
 from app.models.client import Client
 from app.models.invoice import Invoice, InvoiceItem
-from app.schemas.invoice import InvoiceCreate, InvoiceOut, InvoiceUpdate, InvoiceItemCreate
+from app.schemas.invoice import InvoiceCreate, InvoiceOut, InvoiceUpdate, InvoiceItemCreate, UserBusinessInfo
 
 
 router = APIRouter()
 
 TWO_PLACES = Decimal("0.01")
+
+
+def _enrich_invoice_with_user_info(invoice: Invoice, user: User) -> Invoice:
+    """Add user business information to invoice for display purposes"""
+    invoice.user_business_info = UserBusinessInfo(
+        full_name=user.full_name,
+        email=user.email,
+        phone=user.phone,
+        company_name=user.company_name,
+        company_logo_url=user.company_logo_url,
+        company_address=user.company_address,
+        tax_id=user.tax_id,
+        website=user.website,
+    )
+    return invoice
 
 
 def _get_owned_invoice(db: Session, current_user: User, invoice_id: int) -> Invoice:
@@ -59,6 +74,10 @@ def list_invoices(
 
     q = q.order_by(Invoice.id.asc()).limit(limit).offset(offset)
     rows = q.all()
+
+    # Enrich invoices with user business info
+    for invoice in rows:
+        _enrich_invoice_with_user_info(invoice, current_user)
 
     # Expose a simple cursor in header if more results likely exist
     if rows:
@@ -126,6 +145,10 @@ def create_invoice(payload: InvoiceCreate, db: Session = Depends(get_db), curren
 
     db.commit()
     db.refresh(invoice)
+    
+    # Enrich with user business info
+    _enrich_invoice_with_user_info(invoice, current_user)
+    
     return invoice
 
 
@@ -155,7 +178,9 @@ def _add_item(db: Session, invoice: Invoice, item: InvoiceItemCreate) -> Invoice
 
 @router.get("/invoices/{invoice_id}", response_model=InvoiceOut)
 def get_invoice(invoice_id: int, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
-    return _get_owned_invoice(db, current_user, invoice_id)
+    invoice = _get_owned_invoice(db, current_user, invoice_id)
+    _enrich_invoice_with_user_info(invoice, current_user)
+    return invoice
 
 
 @router.put("/invoices/{invoice_id}", response_model=InvoiceOut)
@@ -178,6 +203,10 @@ def update_invoice(invoice_id: int, payload: InvoiceUpdate, db: Session = Depend
 
     db.commit()
     db.refresh(invoice)
+    
+    # Enrich with user business info
+    _enrich_invoice_with_user_info(invoice, current_user)
+    
     return invoice
 
 
