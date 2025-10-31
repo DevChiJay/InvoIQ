@@ -165,6 +165,19 @@ export interface ExtractionResponse {
 }
 
 // Payment Types
+export interface Payment {
+  id: number;
+  payment_type: string;
+  amount: number;
+  currency: string;
+  provider: string;
+  provider_ref: string | null;
+  status: 'pending' | 'paid' | 'failed' | 'cancelled';
+  description: string | null;
+  created_at: string;
+  updated_at: string | null;
+}
+
 export interface SubscriptionStatus {
   is_pro: boolean;
   subscription_status: string | null;

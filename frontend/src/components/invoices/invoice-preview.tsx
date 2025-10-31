@@ -1,18 +1,29 @@
 'use client';
 
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { formatCurrency, formatSimpleDate } from '@/lib/format';
-import { Mail, Phone, MapPin, Calendar, FileText } from 'lucide-react';
+import { Building2 } from 'lucide-react';
 import type { Invoice, Client } from '@/types/api';
 
 interface InvoicePreviewProps {
   invoice: Invoice;
   client?: Client;
+  companyName?: string;
+  companyEmail?: string;
+  companyPhone?: string;
+  companyAddress?: string;
 }
 
-export function InvoicePreview({ invoice, client }: InvoicePreviewProps) {
+export function InvoicePreview({ 
+  invoice, 
+  client,
+  companyName = 'InvoIQ',
+  companyEmail = 'hello@invoiq.com',
+  companyPhone = '+1 (555) 123-4567',
+  companyAddress = '123 Business St\nSuite 100\nCity, State 12345'
+}: InvoicePreviewProps) {
   const getStatusBadge = (status: string) => {
     const variants: Record<string, 'default' | 'secondary' | 'destructive' | 'outline'> = {
       draft: 'secondary',
@@ -23,185 +34,156 @@ export function InvoicePreview({ invoice, client }: InvoicePreviewProps) {
     };
 
     return (
-      <Badge variant={variants[status] || 'default'}>
+      <Badge variant={variants[status] || 'default'} className="text-xs">
         {status.toUpperCase()}
       </Badge>
     );
   };
 
+  const subtotal = invoice.subtotal || invoice.items.reduce((sum, item) => sum + item.amount, 0);
+  const taxAmount = (subtotal * (invoice.tax || 0)) / 100;
+  const total = invoice.total || subtotal + taxAmount;
+
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-      {/* Invoice Details - Takes 2 columns on large screens */}
-      <div className="lg:col-span-2 space-y-6">
-        <Card>
-          <CardHeader>
-            <div className="flex items-start justify-between">
-              <div>
-                <CardTitle className="text-2xl">Invoice #{invoice.number}</CardTitle>
-                <p className="text-sm text-muted-foreground mt-1">
-                  {invoice.client?.name || 'Unknown Client'}
-                </p>
-              </div>
-              {getStatusBadge(invoice.status)}
+    <Card className="shadow-lg">
+      <CardContent className="p-8 sm:p-12">
+        {/* Invoice Header */}
+        <div className="flex flex-col sm:flex-row justify-between items-start gap-6 mb-12">
+          {/* Company Info with Logo */}
+          <div className="flex items-start gap-4">
+            <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center shrink-0">
+              <Building2 className="h-6 w-6 text-primary" />
             </div>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            {/* Dates */}
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-1">
-                <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <Calendar className="h-4 w-4" />
-                  <span>Issued Date</span>
-                </div>
-                <p className="text-sm font-medium">{formatSimpleDate(invoice.issued_date)}</p>
-              </div>
-              <div className="space-y-1">
-                <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <Calendar className="h-4 w-4" />
-                  <span>Due Date</span>
-                </div>
-                <p className="text-sm font-medium">{formatSimpleDate(invoice.due_date)}</p>
-              </div>
-            </div>
-
-            <Separator />
-
-            {/* Items */}
             <div>
-              <h3 className="font-semibold mb-4 flex items-center gap-2">
-                <FileText className="h-5 w-5" />
-                Invoice Items
-              </h3>
-              <div className="space-y-3">
-                {invoice.items.map((item, index) => (
-                  <div
-                    key={index}
-                    className="flex justify-between items-start p-3 rounded-lg bg-muted/50"
-                  >
-                    <div className="flex-1">
-                      <p className="font-medium">{item.description}</p>
-                      <p className="text-sm text-muted-foreground">
-                        {item.quantity} × {formatCurrency(item.unit_price)}
-                      </p>
-                    </div>
-                    <p className="font-semibold">{formatCurrency(item.amount)}</p>
-                  </div>
-                ))}
+              <h1 className="text-2xl sm:text-3xl font-bold text-foreground mb-2">{companyName}</h1>
+              <div className="text-sm text-muted-foreground space-y-0.5">
+                {companyEmail && <p>{companyEmail}</p>}
+                {companyPhone && <p>{companyPhone}</p>}
+                {companyAddress && <p className="whitespace-pre-line">{companyAddress}</p>}
               </div>
             </div>
+          </div>
 
-            <Separator />
+          {/* Invoice Title & Status */}
+          <div className="text-left sm:text-right">
+            <h2 className="text-3xl sm:text-4xl font-bold text-foreground mb-2">INVOICE</h2>
+            <p className="text-lg font-semibold text-muted-foreground mb-3">#{invoice.number}</p>
+            {getStatusBadge(invoice.status)}
+          </div>
+        </div>
 
-            {/* Totals */}
+        <Separator className="my-8" />
+
+        {/* Bill To & Invoice Details */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 mb-12">
+          {/* Bill To */}
+          <div>
+            <h3 className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-3">Bill To</h3>
+            <div className="space-y-1">
+              <p className="font-bold text-foreground text-lg">{client?.name || 'Unknown Client'}</p>
+              {client?.email && <p className="text-sm text-muted-foreground">{client.email}</p>}
+              {client?.phone && <p className="text-sm text-muted-foreground">{client.phone}</p>}
+              {client?.address && (
+                <p className="text-sm text-muted-foreground whitespace-pre-line mt-2">{client.address}</p>
+              )}
+            </div>
+          </div>
+
+          {/* Invoice Details */}
+          <div>
+            <h3 className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-3">Invoice Details</h3>
             <div className="space-y-2">
               <div className="flex justify-between text-sm">
-                <span className="text-muted-foreground">Subtotal</span>
-                <span className="font-medium">{formatCurrency(invoice.subtotal)}</span>
+                <span className="text-muted-foreground">Issue Date:</span>
+                <span className="font-semibold text-foreground">{formatSimpleDate(invoice.issued_date)}</span>
               </div>
-              {invoice.tax > 0 && (
-                <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">Tax ({invoice.tax}%)</span>
-                  <span className="font-medium">
-                    {formatCurrency((invoice.subtotal * invoice.tax) / 100)}
-                  </span>
-                </div>
-              )}
-              <Separator />
-              <div className="flex justify-between text-lg font-bold">
-                <span>Total</span>
-                <span>{formatCurrency(invoice.total)}</span>
+              <div className="flex justify-between text-sm">
+                <span className="text-muted-foreground">Due Date:</span>
+                <span className="font-semibold text-foreground">{formatSimpleDate(invoice.due_date)}</span>
               </div>
             </div>
+          </div>
+        </div>
 
-            {/* Notes */}
-            {invoice.notes && (
-              <>
-                <Separator />
-                <div>
-                  <h3 className="font-semibold mb-2">Notes</h3>
-                  <p className="text-sm text-muted-foreground whitespace-pre-wrap">
-                    {invoice.notes}
-                  </p>
-                </div>
-              </>
-            )}
-          </CardContent>
-        </Card>
-      </div>
+        {/* Items Table */}
+        <div className="mb-8">
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead>
+                <tr className="border-b-2 border-border">
+                  <th className="text-left py-3 px-2 text-xs font-bold text-muted-foreground uppercase tracking-wider">
+                    Description
+                  </th>
+                  <th className="text-right py-3 px-2 text-xs font-bold text-muted-foreground uppercase tracking-wider w-16">
+                    Qty
+                  </th>
+                  <th className="text-right py-3 px-2 text-xs font-bold text-muted-foreground uppercase tracking-wider w-28">
+                    Unit Price
+                  </th>
+                  <th className="text-right py-3 px-2 text-xs font-bold text-muted-foreground uppercase tracking-wider w-32">
+                    Amount
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {invoice.items.map((item, index) => (
+                  <tr key={index} className="border-b border-border">
+                    <td className="py-4 px-2 text-sm text-foreground">{item.description}</td>
+                    <td className="py-4 px-2 text-sm text-foreground text-right">{Number(item.quantity)}</td>
+                    <td className="py-4 px-2 text-sm text-foreground text-right">
+                      {formatCurrency(item.unit_price)}
+                    </td>
+                    <td className="py-4 px-2 text-sm font-semibold text-foreground text-right">
+                      {formatCurrency(item.amount)}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
 
-      {/* Client Information - Takes 1 column on large screens */}
-      <div className="lg:col-span-1">
-        <Card>
-          <CardHeader>
-            <CardTitle>Client Information</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            {client ? (
-              <>
-                <div>
-                  <h3 className="font-semibold text-lg">{client.name}</h3>
-                </div>
-
-                {client.email && (
-                  <div className="flex items-start gap-3">
-                    <Mail className="h-4 w-4 mt-0.5 text-muted-foreground" />
-                    <div className="flex-1">
-                      <p className="text-sm text-muted-foreground">Email</p>
-                      <a
-                        href={`mailto:${client.email}`}
-                        className="text-sm font-medium hover:underline"
-                      >
-                        {client.email}
-                      </a>
-                    </div>
-                  </div>
-                )}
-
-                {client.phone && (
-                  <div className="flex items-start gap-3">
-                    <Phone className="h-4 w-4 mt-0.5 text-muted-foreground" />
-                    <div className="flex-1">
-                      <p className="text-sm text-muted-foreground">Phone</p>
-                      <a
-                        href={`tel:${client.phone}`}
-                        className="text-sm font-medium hover:underline"
-                      >
-                        {client.phone}
-                      </a>
-                    </div>
-                  </div>
-                )}
-
-                {client.address && (
-                  <div className="flex items-start gap-3">
-                    <MapPin className="h-4 w-4 mt-0.5 text-muted-foreground" />
-                    <div className="flex-1">
-                      <p className="text-sm text-muted-foreground">Address</p>
-                      <p className="text-sm font-medium whitespace-pre-wrap">
-                        {client.address}
-                      </p>
-                    </div>
-                  </div>
-                )}
-
-                <Separator />
-
-                <div className="space-y-2">
-                  <p className="text-xs text-muted-foreground">
-                    Client since {formatSimpleDate(client.created_at)}
-                  </p>
-                </div>
-              </>
-            ) : (
-              <div className="text-center py-8">
-                <p className="text-sm text-muted-foreground">
-                  Client information not available
-                </p>
+        {/* Totals */}
+        <div className="flex justify-end mb-12">
+          <div className="w-full sm:w-80 space-y-3">
+            <div className="flex justify-between py-2 border-b border-border">
+              <span className="text-sm text-muted-foreground">Subtotal:</span>
+              <span className="text-sm font-semibold text-foreground">{formatCurrency(subtotal)}</span>
+            </div>
+            {invoice.tax > 0 && (
+              <div className="flex justify-between py-2 border-b border-border">
+                <span className="text-sm text-muted-foreground">Tax ({invoice.tax}%):</span>
+                <span className="text-sm font-semibold text-foreground">{formatCurrency(taxAmount)}</span>
               </div>
             )}
-          </CardContent>
-        </Card>
-      </div>
-    </div>
+            <div className="flex justify-between py-3 px-4 bg-muted rounded-lg">
+              <span className="text-lg font-bold text-foreground">Total:</span>
+              <span className="text-lg font-bold text-foreground">{formatCurrency(total)}</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Notes */}
+        {invoice.notes && (
+          <>
+            <Separator className="my-8" />
+            <div>
+              <h3 className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-3">Notes</h3>
+              <p className="text-sm text-foreground whitespace-pre-wrap leading-relaxed">
+                {invoice.notes}
+              </p>
+            </div>
+          </>
+        )}
+
+        {/* Footer */}
+        <Separator className="my-8" />
+        <div className="text-center">
+          <p className="text-xs text-muted-foreground">
+            Thank you for your business! • Generated by {companyName}
+          </p>
+        </div>
+      </CardContent>
+    </Card>
   );
 }

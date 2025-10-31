@@ -10,6 +10,7 @@ import type {
   InvoiceListParams,
   BackendExtractionResponse,
   SubscriptionStatus,
+  Payment,
   AuthResponse,
 } from '@/types/api';
 
@@ -152,6 +153,9 @@ export const paymentsAPI = {
   
   getSubscriptionStatus: () =>
     api.get<SubscriptionStatus>('/v1/payments/subscription/status'),
+  
+  getPaymentHistory: (limit?: number, offset?: number) =>
+    api.get<Payment[]>('/v1/payments/history', { params: { limit, offset } }),
   
   sendReminder: (invoice_id: number) =>
     api.post<{ status: string; invoice_id: number }>('/v1/send-reminder', null, { params: { invoice_id } }),

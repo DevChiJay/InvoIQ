@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { paymentsAPI } from '@/lib/api';
+import type { Payment } from '@/types/api';
 
 export interface SubscriptionStatus {
   is_pro: boolean;
@@ -73,6 +74,17 @@ export function useSendReminder() {
   return useMutation<{ status: string; invoice_id: number }, Error, number>({
     mutationFn: async (invoiceId) => {
       const response = await paymentsAPI.sendReminder(invoiceId);
+      return response.data;
+    },
+  });
+}
+
+// Get payment history
+export function usePaymentHistory(limit?: number, offset?: number) {
+  return useQuery<Payment[]>({
+    queryKey: ['payments', 'history', limit, offset],
+    queryFn: async () => {
+      const response = await paymentsAPI.getPaymentHistory(limit, offset);
       return response.data;
     },
   });

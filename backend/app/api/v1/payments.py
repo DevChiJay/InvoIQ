@@ -145,6 +145,35 @@ def get_subscription_status(
     }
 
 
+@router.get("/history")
+def get_payment_history(
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+    limit: int = 50,
+    offset: int = 0
+):
+    """Get user's payment history."""
+    payments = db.query(Payment).filter(
+        Payment.user_id == current_user.id
+    ).order_by(Payment.created_at.desc()).limit(limit).offset(offset).all()
+    
+    return [
+        {
+            "id": p.id,
+            "payment_type": p.payment_type,
+            "amount": float(p.amount),
+            "currency": p.currency,
+            "provider": p.provider,
+            "provider_ref": p.provider_ref,
+            "status": p.status,
+            "description": p.description,
+            "created_at": p.created_at,
+            "updated_at": p.updated_at,
+        }
+        for p in payments
+    ]
+
+
 @router.post("/webhook/paystack")
 def paystack_webhook(payload: dict):
     """Handle Paystack webhook notifications."""

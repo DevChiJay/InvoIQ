@@ -180,7 +180,7 @@ export default function InvoiceDetailPage() {
       <InvoicePreview invoice={invoice} client={client} />
 
       {/* PDF Viewer */}
-      <InvoicePDFViewer invoiceId={invoice.id} />
+      {client && <InvoicePDFViewer invoice={invoice} client={client} />}
 
       {/* Delete Confirmation Dialog */}
       <ConfirmDialog
