@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
-import { Upload, FileText, Loader2 } from 'lucide-react';
+import { Upload, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 
@@ -20,7 +20,6 @@ export function UploadChat({ onExtract, isLoading }: UploadChatProps) {
   const [dragActive, setDragActive] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [textInput, setTextInput] = useState('');
-  const [mode, setMode] = useState<'file' | 'text'>('file');
 
   const validateAndSetFile = useCallback((file: File) => {
     if (!file.type.startsWith('image/')) {
@@ -34,7 +33,6 @@ export function UploadChat({ onExtract, isLoading }: UploadChatProps) {
     }
 
     setSelectedFile(file);
-    setMode('file');
     return true;
   }, []);
 
@@ -65,150 +63,121 @@ export function UploadChat({ onExtract, isLoading }: UploadChatProps) {
   };
 
   const handleExtract = () => {
-    if (mode === 'file' && !selectedFile) {
-      toast.error('Please select a file to extract');
-      return;
-    }
-    
-    if (mode === 'text' && !textInput.trim()) {
-      toast.error('Please enter invoice text to extract');
+    if (!selectedFile && !textInput.trim()) {
+      toast.error('Please provide an image or text to extract');
       return;
     }
 
     const formData = new FormData();
     
-    if (mode === 'file' && selectedFile) {
+    if (selectedFile) {
       formData.append('file', selectedFile);
-    } else if (mode === 'text' && textInput.trim()) {
+    }
+    
+    if (textInput.trim()) {
       formData.append('text', textInput.trim());
     }
 
     onExtract(formData);
   };
 
-  const canExtract = (mode === 'file' && selectedFile) || (mode === 'text' && textInput.trim().length > 0);
+  const canExtract = selectedFile || textInput.trim().length > 0;
 
   return (
     <div className="space-y-6">
-      {/* Mode Selector */}
-      <div className="flex gap-2">
-        <Button
-          variant={mode === 'file' ? 'default' : 'outline'}
-          onClick={() => setMode('file')}
-          disabled={isLoading}
-          className="flex-1"
-        >
-          <Upload className="mr-2 h-4 w-4" />
-          Upload Image
-        </Button>
-        <Button
-          variant={mode === 'text' ? 'default' : 'outline'}
-          onClick={() => setMode('text')}
-          disabled={isLoading}
-          className="flex-1"
-        >
-          <FileText className="mr-2 h-4 w-4" />
-          Paste Text
-        </Button>
-      </div>
-
-      {/* File Upload Mode */}
-      {mode === 'file' && (
-        <Card>
-          <CardHeader>
-            <CardTitle>Upload Invoice Screenshot</CardTitle>
-            <CardDescription>
-              Drag and drop an image or click to select
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div
-              className={cn(
-                'relative border-2 border-dashed rounded-lg p-8 text-center transition-colors',
-                dragActive
-                  ? 'border-primary bg-primary/5'
-                  : 'border-muted-foreground/25 hover:border-muted-foreground/50',
-                selectedFile && 'border-primary bg-primary/5'
-              )}
-              onDragEnter={handleDrag}
-              onDragLeave={handleDrag}
-              onDragOver={handleDrag}
-              onDrop={handleDrop}
-            >
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handleFileChange}
-                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                disabled={isLoading}
-              />
-              <div className="flex flex-col items-center gap-4">
-                <div className="p-4 bg-primary/10 rounded-full">
-                  <Upload className="h-8 w-8 text-primary" />
-                </div>
-                {selectedFile ? (
-                  <>
-                    <div>
-                      <p className="font-semibold text-lg">{selectedFile.name}</p>
-                      <p className="text-sm text-muted-foreground">
-                        {(selectedFile.size / 1024 / 1024).toFixed(2)} MB
-                      </p>
-                    </div>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setSelectedFile(null);
-                      }}
-                      disabled={isLoading}
-                    >
-                      Remove
-                    </Button>
-                  </>
-                ) : (
-                  <>
-                    <div>
-                      <p className="font-semibold">Click to upload or drag and drop</p>
-                      <p className="text-sm text-muted-foreground">
-                        PNG, JPG, JPEG up to 10MB
-                      </p>
-                    </div>
-                  </>
-                )}
+      {/* File Upload Section */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Upload Invoice Screenshot (Optional)</CardTitle>
+          <CardDescription>
+            Drag and drop an image or click to select
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div
+            className={cn(
+              'relative border-2 border-dashed rounded-lg p-8 text-center transition-colors',
+              dragActive
+                ? 'border-primary bg-primary/5'
+                : 'border-muted-foreground/25 hover:border-muted-foreground/50',
+              selectedFile && 'border-primary bg-primary/5'
+            )}
+            onDragEnter={handleDrag}
+            onDragLeave={handleDrag}
+            onDragOver={handleDrag}
+            onDrop={handleDrop}
+          >
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleFileChange}
+              className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+              disabled={isLoading}
+            />
+            <div className="flex flex-col items-center gap-4">
+              <div className="p-4 bg-primary/10 rounded-full">
+                <Upload className="h-8 w-8 text-primary" />
               </div>
+              {selectedFile ? (
+                <>
+                  <div>
+                    <p className="font-semibold text-lg">{selectedFile.name}</p>
+                    <p className="text-sm text-muted-foreground">
+                      {(selectedFile.size / 1024 / 1024).toFixed(2)} MB
+                    </p>
+                  </div>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setSelectedFile(null);
+                    }}
+                    disabled={isLoading}
+                  >
+                    Remove
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <div>
+                    <p className="font-semibold">Click to upload or drag and drop</p>
+                    <p className="text-sm text-muted-foreground">
+                      PNG, JPG, JPEG up to 10MB
+                    </p>
+                  </div>
+                </>
+              )}
             </div>
-          </CardContent>
-        </Card>
-      )}
+          </div>
+        </CardContent>
+      </Card>
 
-      {/* Text Input Mode */}
-      {mode === 'text' && (
-        <Card>
-          <CardHeader>
-            <CardTitle>Paste Invoice Text</CardTitle>
-            <CardDescription>
-              Copy and paste invoice text or chat conversation
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-2">
-              <Label htmlFor="text-input">Invoice Text</Label>
-              <Textarea
-                id="text-input"
-                value={textInput}
-                onChange={(e) => setTextInput(e.target.value)}
-                placeholder="Paste your invoice text here...&#10;&#10;Example:&#10;Invoice #INV-001&#10;Client: John Doe&#10;Email: john@example.com&#10;&#10;Web Development - $1000&#10;Logo Design - $500&#10;&#10;Total: $1500"
-                className="min-h-[300px] font-mono text-sm"
-                disabled={isLoading}
-              />
-              <p className="text-xs text-muted-foreground">
-                {textInput.length} characters
-              </p>
-            </div>
-          </CardContent>
-        </Card>
-      )}
+      {/* Text Input Section */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Additional Text Context (Optional)</CardTitle>
+          <CardDescription>
+            Add extra details or paste invoice text to enhance extraction accuracy
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-2">
+            <Label htmlFor="text-input">Invoice Text or Additional Details</Label>
+            <Textarea
+              id="text-input"
+              value={textInput}
+              onChange={(e) => setTextInput(e.target.value)}
+              placeholder="Paste your invoice text here or add additional context...&#10;&#10;Example:&#10;Invoice #INV-001&#10;Client: John Doe&#10;Email: john@example.com&#10;&#10;Web Development - $1000&#10;Logo Design - $500&#10;&#10;Total: $1500"
+              className="min-h-[200px] font-mono text-sm"
+              disabled={isLoading}
+            />
+            <p className="text-xs text-muted-foreground">
+              {textInput.length} characters • You can provide image only, text only, or both for better accuracy
+            </p>
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Extract Button */}
       <Button
