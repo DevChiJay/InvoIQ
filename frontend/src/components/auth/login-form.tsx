@@ -31,6 +31,7 @@ export default function LoginForm() {
   const router = useRouter();
   const { login } = useAuthStore();
   const [isLoading, setIsLoading] = useState(false);
+  const [unverifiedEmail, setUnverifiedEmail] = useState<string | null>(null);
 
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
@@ -42,12 +43,20 @@ export default function LoginForm() {
 
   const onSubmit = async (data: LoginFormValues) => {
     setIsLoading(true);
+    setUnverifiedEmail(null);
     try {
       await login(data.email, data.password);
       toast.success('Login successful!');
       router.push('/dashboard');
-    } catch {
-      toast.error('Login failed. Please check your credentials.');
+    } catch (error: unknown) {
+      // Check if error is due to unverified email
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      if (errorMessage.includes('not verified')) {
+        setUnverifiedEmail(data.email);
+        toast.error('Please verify your email before logging in.');
+      } else {
+        toast.error('Login failed. Please check your credentials.');
+      }
     } finally {
       setIsLoading(false);
     }
@@ -105,6 +114,21 @@ export default function LoginForm() {
             </Button>
           </form>
         </Form>
+        
+        {unverifiedEmail && (
+          <div className="mt-4 p-3 bg-amber-50 dark:bg-amber-950 border border-amber-200 dark:border-amber-800 rounded-md">
+            <p className="text-sm text-amber-800 dark:text-amber-200 mb-2">
+              Your email is not verified. Please check your inbox for a verification link.
+            </p>
+            <Link 
+              href="/resend-verification" 
+              className="text-sm text-primary hover:underline font-medium"
+            >
+              Resend verification email →
+            </Link>
+          </div>
+        )}
+        
         <div className="mt-4 text-center text-sm">
           Don&apos;t have an account?{' '}
           <Link href="/register" className="text-primary hover:underline">

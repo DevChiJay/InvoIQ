@@ -20,6 +20,18 @@ class Settings(BaseModel):
     PAYSTACK_SECRET_KEY: str | None = os.getenv("PAYSTACK_SECRET_KEY")
     PAYSTACK_BASE_URL: str = os.getenv("PAYSTACK_BASE_URL", "https://api.paystack.co")
     STRIPE_SECRET_KEY: str | None = os.getenv("STRIPE_SECRET_KEY")
+    
+    # Email/SMTP settings for email verification
+    SMTP_HOST: str = os.getenv("SMTP_HOST", "smtp.gmail.com")
+    SMTP_PORT: int = int(os.getenv("SMTP_PORT", "587"))
+    SMTP_USER: str | None = os.getenv("SMTP_USER")
+    SMTP_PASSWORD: str | None = os.getenv("SMTP_PASSWORD")
+    SMTP_FROM_EMAIL: str = os.getenv("SMTP_FROM_EMAIL", os.getenv("SMTP_USER", "noreply@invoiq.com"))
+    SMTP_FROM_NAME: str = os.getenv("SMTP_FROM_NAME", "InvoIQ")
+    SMTP_USE_TLS: bool = os.getenv("SMTP_USE_TLS", "true").lower() == "true"
+    
+    # Frontend URL for email verification links
+    FRONTEND_URL: str = os.getenv("FRONTEND_URL", "http://localhost:3000")
 
     class Config:
         arbitrary_types_allowed = True

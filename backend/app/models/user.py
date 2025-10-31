@@ -11,6 +11,11 @@ class User(Base):
     full_name = Column(String, nullable=True)
     is_active = Column(Boolean, default=True)
     
+    # Email verification fields
+    is_verified = Column(Boolean, default=False)
+    verification_token = Column(String, nullable=True)
+    verification_token_expires = Column(DateTime, nullable=True)
+    
     # Pro-tier subscription fields
     is_pro = Column(Boolean, default=False)
     subscription_status = Column(String, nullable=True)  # active, cancelled, expired, pending

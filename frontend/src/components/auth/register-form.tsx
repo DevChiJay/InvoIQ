@@ -42,6 +42,7 @@ export default function RegisterForm() {
   const { register } = useAuthStore();
   const [isLoading, setIsLoading] = useState(false);
   const [passwordValue, setPasswordValue] = useState('');
+  const [registeredEmail, setRegisteredEmail] = useState<string | null>(null);
 
   const form = useForm<RegisterFormValues>({
     resolver: zodResolver(registerSchema),
@@ -63,8 +64,8 @@ export default function RegisterForm() {
     setIsLoading(true);
     try {
       await register(data.email, data.password, data.full_name);
-      toast.success('Account created successfully!');
-      router.push('/dashboard');
+      setRegisteredEmail(data.email);
+      toast.success('Account created! Please check your email to verify your account.');
     } catch {
       toast.error('Registration failed. Please try again.');
     } finally {
@@ -81,7 +82,50 @@ export default function RegisterForm() {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <Form {...form}>
+        {registeredEmail ? (
+          <div className="space-y-4">
+            <div className="rounded-lg border border-green-200 bg-green-50 dark:border-green-800 dark:bg-green-950 p-4">
+              <div className="flex items-start gap-3">
+                <Check className="h-5 w-5 text-green-600 dark:text-green-400 mt-0.5" />
+                <div className="space-y-1">
+                  <p className="font-medium text-green-900 dark:text-green-100">
+                    Account created successfully!
+                  </p>
+                  <p className="text-sm text-green-800 dark:text-green-200">
+                    We&apos;ve sent a verification email to <strong>{registeredEmail}</strong>
+                  </p>
+                </div>
+              </div>
+            </div>
+            
+            <div className="rounded-lg border bg-muted p-4 text-sm space-y-2">
+              <p className="font-medium">What&apos;s next?</p>
+              <ol className="list-decimal list-inside space-y-1 text-muted-foreground">
+                <li>Check your email inbox</li>
+                <li>Click the verification link in the email</li>
+                <li>Return to the login page</li>
+              </ol>
+            </div>
+            
+            <div className="flex gap-2">
+              <Button 
+                onClick={() => router.push('/login')}
+                className="flex-1"
+              >
+                Go to Login
+              </Button>
+              <Button 
+                onClick={() => router.push('/resend-verification')}
+                variant="outline"
+                className="flex-1"
+              >
+                Resend Email
+              </Button>
+            </div>
+          </div>
+        ) : (
+          <>
+            <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <FormField
               control={form.control}
@@ -195,6 +239,8 @@ export default function RegisterForm() {
             Sign in
           </Link>
         </div>
+        </>
+        )}
       </CardContent>
     </Card>
   );

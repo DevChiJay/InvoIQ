@@ -32,6 +32,7 @@ class UserUpdate(BaseModel):
 
 class UserOut(UserBase):
     id: int
+    is_verified: bool = False
 
     class Config:
         from_attributes = True
@@ -39,6 +40,7 @@ class UserOut(UserBase):
 class UserRead(UserBase):
     id: int
     is_active: bool
+    is_verified: bool
     is_pro: bool
     subscription_status: str | None = None
     subscription_provider: str | None = None
@@ -56,3 +58,16 @@ class UserRead(UserBase):
 
     class Config:
         from_attributes = True
+
+
+# Email verification schemas
+class EmailVerificationResponse(BaseModel):
+    """Response after successful email verification"""
+    message: str
+    email: str
+
+
+class ResendVerificationRequest(BaseModel):
+    """Request to resend verification email"""
+    email: EmailStr
+
