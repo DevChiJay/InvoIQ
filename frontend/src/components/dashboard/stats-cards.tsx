@@ -29,6 +29,13 @@ export function StatsCards({ stats, isLoading }: StatsCardsProps) {
     );
   }
 
+  const formatCurrency = (amount: number) => {
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD',
+    }).format(amount);
+  };
+
   return (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
       <Card>
@@ -61,7 +68,7 @@ export function StatsCards({ stats, isLoading }: StatsCardsProps) {
           <DollarSign className="h-4 w-4 text-muted-foreground" />
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold">{stats.totalRevenue}</div>
+          <div className="text-2xl font-bold">{formatCurrency(stats.totalRevenue)}</div>
           <p className="text-xs text-muted-foreground">From paid invoices</p>
         </CardContent>
       </Card>

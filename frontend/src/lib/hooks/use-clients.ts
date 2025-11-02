@@ -2,6 +2,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { clientsAPI } from '@/lib/api';
 import type { ClientCreate, ClientUpdate } from '@/types/api';
 import { toast } from 'sonner';
+import { formatErrorMessage } from '@/lib/utils';
 
 export const useClients = (limit?: number, offset?: number) => {
   return useQuery({
@@ -35,8 +36,9 @@ export const useCreateClient = () => {
       toast.success('Client created successfully');
     },
     onError: (error: unknown) => {
-      const err = error as { response?: { data?: { detail?: string } } };
-      toast.error(err.response?.data?.detail || 'Failed to create client');
+      const err = error as { response?: { data?: { detail?: unknown } } };
+      const message = formatErrorMessage(err.response?.data?.detail, 'Failed to create client');
+      toast.error(message);
     },
   });
 };
@@ -52,8 +54,9 @@ export const useUpdateClient = (id: number) => {
       toast.success('Client updated successfully');
     },
     onError: (error: unknown) => {
-      const err = error as { response?: { data?: { detail?: string } } };
-      toast.error(err.response?.data?.detail || 'Failed to update client');
+      const err = error as { response?: { data?: { detail?: unknown } } };
+      const message = formatErrorMessage(err.response?.data?.detail, 'Failed to update client');
+      toast.error(message);
     },
   });
 };
@@ -69,8 +72,9 @@ export const useDeleteClient = () => {
       toast.success('Client deleted successfully');
     },
     onError: (error: unknown) => {
-      const err = error as { response?: { data?: { detail?: string } } };
-      toast.error(err.response?.data?.detail || 'Failed to delete client');
+      const err = error as { response?: { data?: { detail?: unknown } } };
+      const message = formatErrorMessage(err.response?.data?.detail, 'Failed to delete client');
+      toast.error(message);
     },
   });
 };

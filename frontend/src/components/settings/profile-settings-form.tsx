@@ -11,6 +11,7 @@ import { usersAPI } from "@/lib/api";
 import { useAuthStore } from "@/stores/auth-store";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
+import { formatErrorMessage } from "@/lib/utils";
 
 interface ProfileFormData {
   full_name: string;
@@ -54,8 +55,10 @@ export function ProfileSettingsForm() {
       queryClient.invalidateQueries({ queryKey: ["user"] });
       toast.success("Profile updated successfully");
     },
-    onError: (error: any) => {
-      toast.error(error.response?.data?.detail || "Failed to update profile");
+    onError: (error: unknown) => {
+      const err = error as { response?: { data?: { detail?: unknown } } };
+      const message = formatErrorMessage(err.response?.data?.detail, "Failed to update profile");
+      toast.error(message);
     },
   });
 
@@ -67,8 +70,10 @@ export function ProfileSettingsForm() {
       const response = await usersAPI.uploadAvatar(file);
       toast.success("Avatar uploaded successfully");
       queryClient.invalidateQueries({ queryKey: ["user"] });
-    } catch (error: any) {
-      toast.error(error.response?.data?.detail || "Failed to upload avatar");
+    } catch (error: unknown) {
+      const err = error as { response?: { data?: { detail?: unknown } } };
+      const message = formatErrorMessage(err.response?.data?.detail, "Failed to upload avatar");
+      toast.error(message);
     } finally {
       setUploadingAvatar(false);
     }

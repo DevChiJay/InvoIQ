@@ -1,3 +1,5 @@
+'use client';
+
 import { Upload, Scan, CheckCircle2, Download } from 'lucide-react';
 
 const steps = [
@@ -46,7 +48,7 @@ export default function HowItWorks() {
         </div>
 
         {/* Steps */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 relative">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 relative mb-20">
           {/* Connection line for desktop */}
           <div className="hidden lg:block absolute top-16 left-0 right-0 h-1 bg-gradient-to-r from-teal-200 via-emerald-200 to-cyan-200 dark:from-teal-800 dark:via-emerald-800 dark:to-cyan-800 rounded-full" 
                style={{ marginLeft: '10%', marginRight: '10%' }} 
@@ -75,6 +77,60 @@ export default function HowItWorks() {
               </div>
             );
           })}
+        </div>
+
+        {/* Video Demo Section */}
+        <div className="mt-20">
+
+          <div className="max-w-5xl mx-auto">
+            <div className="relative rounded-2xl overflow-hidden shadow-2xl bg-gradient-to-br from-indigo-500/10 via-teal-500/10 to-purple-500/10 dark:from-indigo-500/20 dark:via-teal-500/20 dark:to-purple-500/20 p-2">
+              <div className="relative aspect-video bg-black rounded-xl overflow-hidden group">
+                <video
+                  className="w-full h-full object-contain"
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
+                  preload="metadata"
+                >
+                  <source src="/demo.mp4" type="video/mp4" />
+                  Your browser does not support the video tag.
+                </video>
+              </div>
+
+              {/* Decorative elements */}
+              <div className="absolute -top-4 -left-4 w-24 h-24 bg-gradient-to-br from-indigo-500 to-purple-500 rounded-full blur-2xl opacity-20" />
+              <div className="absolute -bottom-4 -right-4 w-32 h-32 bg-gradient-to-br from-teal-500 to-cyan-500 rounded-full blur-2xl opacity-20" />
+            </div>
+
+            {/* Video features highlight */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-10">
+              <div className="text-center p-6 rounded-xl bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm border border-gray-200 dark:border-gray-700">
+                <div className="text-3xl font-bold text-indigo-600 dark:text-indigo-400 mb-2">
+                  &lt;60s
+                </div>
+                <p className="text-gray-600 dark:text-gray-400 font-medium">
+                  Average Processing Time
+                </p>
+              </div>
+              <div className="text-center p-6 rounded-xl bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm border border-gray-200 dark:border-gray-700">
+                <div className="text-3xl font-bold text-teal-600 dark:text-teal-400 mb-2">
+                  99%
+                </div>
+                <p className="text-gray-600 dark:text-gray-400 font-medium">
+                  Accuracy Rate
+                </p>
+              </div>
+              <div className="text-center p-6 rounded-xl bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm border border-gray-200 dark:border-gray-700">
+                <div className="text-3xl font-bold text-purple-600 dark:text-purple-400 mb-2">
+                  Zero
+                </div>
+                <p className="text-gray-600 dark:text-gray-400 font-medium">
+                  Manual Data Entry
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </section>

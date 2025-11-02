@@ -2,6 +2,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { invoicesAPI } from '@/lib/api';
 import type { InvoiceCreate, InvoiceUpdate, InvoiceListParams } from '@/types/api';
 import { toast } from 'sonner';
+import { formatErrorMessage } from '@/lib/utils';
 
 export const useInvoices = (params?: InvoiceListParams) => {
   return useQuery({
@@ -36,8 +37,9 @@ export const useCreateInvoice = () => {
       toast.success('Invoice created successfully');
     },
     onError: (error: unknown) => {
-      const err = error as { response?: { data?: { detail?: string } } };
-      toast.error(err.response?.data?.detail || 'Failed to create invoice');
+      const err = error as { response?: { data?: { detail?: unknown } } };
+      const message = formatErrorMessage(err.response?.data?.detail, 'Failed to create invoice');
+      toast.error(message);
     },
   });
 };
@@ -55,8 +57,9 @@ export const useUpdateInvoice = (id: number) => {
       toast.success('Invoice updated successfully');
     },
     onError: (error: unknown) => {
-      const err = error as { response?: { data?: { detail?: string } } };
-      toast.error(err.response?.data?.detail || 'Failed to update invoice');
+      const err = error as { response?: { data?: { detail?: unknown } } };
+      const message = formatErrorMessage(err.response?.data?.detail, 'Failed to update invoice');
+      toast.error(message);
     },
   });
 };
@@ -73,8 +76,9 @@ export const useDeleteInvoice = () => {
       toast.success('Invoice deleted successfully');
     },
     onError: (error: unknown) => {
-      const err = error as { response?: { data?: { detail?: string } } };
-      toast.error(err.response?.data?.detail || 'Failed to delete invoice');
+      const err = error as { response?: { data?: { detail?: unknown } } };
+      const message = formatErrorMessage(err.response?.data?.detail, 'Failed to delete invoice');
+      toast.error(message);
     },
   });
 };

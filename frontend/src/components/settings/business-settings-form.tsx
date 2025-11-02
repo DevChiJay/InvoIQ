@@ -12,6 +12,7 @@ import { usersAPI } from "@/lib/api";
 import { useAuthStore } from "@/stores/auth-store";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
+import { formatErrorMessage } from "@/lib/utils";
 
 interface BusinessFormData {
   company_name: string;
@@ -57,8 +58,10 @@ export function BusinessSettingsForm() {
       queryClient.invalidateQueries({ queryKey: ["user"] });
       toast.success("Business details updated successfully");
     },
-    onError: (error: any) => {
-      toast.error(error.response?.data?.detail || "Failed to update business details");
+    onError: (error: unknown) => {
+      const err = error as { response?: { data?: { detail?: unknown } } };
+      const message = formatErrorMessage(err.response?.data?.detail, "Failed to update business details");
+      toast.error(message);
     },
   });
 
@@ -66,11 +69,13 @@ export function BusinessSettingsForm() {
     setUploadingLogo(true);
     
     try {
-      const response = await usersAPI.uploadLogo(file);
+      await usersAPI.uploadLogo(file);
       toast.success("Company logo uploaded successfully");
       queryClient.invalidateQueries({ queryKey: ["user"] });
-    } catch (error: any) {
-      toast.error(error.response?.data?.detail || "Failed to upload logo");
+    } catch (error: unknown) {
+      const err = error as { response?: { data?: { detail?: unknown } } };
+      const message = formatErrorMessage(err.response?.data?.detail, "Failed to upload logo");
+      toast.error(message);
     } finally {
       setUploadingLogo(false);
     }
