@@ -2,14 +2,17 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
+import { useState } from 'react';
 import { useAuthStore } from '@/stores/auth-store';
 import { useUIStore } from '@/stores/ui-store';
 import { Button } from '@/components/ui/button';
-import { LogOut, Menu } from 'lucide-react';
+import { LogOut, Menu, Crown } from 'lucide-react';
+import { UpgradeModal } from '@/components/payments/upgrade-modal';
 
 export default function Header() {
   const { user, logout } = useAuthStore();
   const { toggleMobileMenu } = useUIStore();
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
 
   const handleLogout = () => {
     logout();
@@ -55,6 +58,17 @@ export default function Header() {
               </div>
             </div>
             
+            {!user?.is_pro && (
+              <Button
+                size="sm"
+                onClick={() => setShowUpgradeModal(true)}
+                className="hidden sm:flex gap-2 bg-gradient-to-r from-[#6366F1] to-[#14B8A6] hover:from-[#5a5cf1] hover:to-[#13a69a] text-white"
+              >
+                <Crown className="h-4 w-4" />
+                Upgrade to Pro
+              </Button>
+            )}
+            
             {user?.is_pro && (
               <span className="hidden sm:inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-gradient-to-r from-[#6366F1] to-[#14B8A6] text-white">
                 PRO
@@ -73,6 +87,11 @@ export default function Header() {
           </div>
         </div>
       </div>
+      
+      <UpgradeModal 
+        open={showUpgradeModal} 
+        onClose={() => setShowUpgradeModal(false)} 
+      />
     </header>
   );
 }

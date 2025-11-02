@@ -1,6 +1,8 @@
 from decimal import Decimal
 from typing import Optional
 import httpx
+import hmac
+import hashlib
 
 from app.core.config import settings
 
@@ -58,3 +60,22 @@ def verify_payment(reference: str) -> dict:
         resp = client.get(url, headers=headers)
         resp.raise_for_status()
         return resp.json()
+
+
+def verify_webhook_signature(body: bytes, signature: str) -> bool:
+    """Verify Paystack webhook signature using HMAC-SHA512."""
+    if not settings.PAYSTACK_SECRET_KEY:
+        return True  # Allow for development/testing
+    
+    try:
+        # Compute expected signature
+        computed_signature = hmac.new(
+            settings.PAYSTACK_SECRET_KEY.encode('utf-8'),
+            body,
+            hashlib.sha512
+        ).hexdigest()
+        
+        # Compare signatures (time-safe comparison)
+        return hmac.compare_digest(signature, computed_signature)
+    except Exception:
+        return False

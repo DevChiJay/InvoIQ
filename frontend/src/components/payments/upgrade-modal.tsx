@@ -13,6 +13,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { CheckCircle2, Crown, Loader2, CreditCard } from "lucide-react";
 import { useCreateSubscription } from "@/lib/hooks/use-payments";
+import { useGeolocation } from "@/lib/hooks/use-geolocation";
 import { toast } from "sonner";
 
 interface UpgradeModalProps {
@@ -21,10 +22,11 @@ interface UpgradeModalProps {
 }
 
 export function UpgradeModal({ open, onClose }: UpgradeModalProps) {
-  const [provider, setProvider] = useState<"paystack" | "stripe">("paystack");
+  const { currencyInfo, isLoading: geoLoading } = useGeolocation();
+  const [provider, setProvider] = useState<"paystack" | "stripe">(
+    currencyInfo.paymentProviders.includes("paystack") ? "paystack" : "stripe"
+  );
   const createSubscription = useCreateSubscription();
-
-  const currency = "USD"; // Fixed currency for now
 
   const handleUpgrade = () => {
     const callbackUrl = `${window.location.origin}/dashboard/settings/billing?verify=true`;
@@ -32,7 +34,7 @@ export function UpgradeModal({ open, onClose }: UpgradeModalProps) {
     toast.promise(
       createSubscription.mutateAsync({
         provider,
-        currency,
+        currency: currencyInfo.currency,
         callback_url: callbackUrl,
       }),
       {
@@ -73,8 +75,10 @@ export function UpgradeModal({ open, onClose }: UpgradeModalProps) {
           {/* Pricing */}
           <div className="bg-linear-to-br from-indigo-50 to-purple-50 dark:from-indigo-950/20 dark:to-purple-950/20 p-4 rounded-lg">
             <div className="text-center">
-              <div className="text-3xl font-bold">$29.99</div>
-              <div className="text-sm text-muted-foreground">per month</div>
+              <div className="text-3xl font-bold">
+                {currencyInfo.symbol}{currencyInfo.price.toLocaleString()}
+              </div>
+              <div className="text-sm text-muted-foreground">{currencyInfo.period}</div>
             </div>
           </div>
 
@@ -95,30 +99,34 @@ export function UpgradeModal({ open, onClose }: UpgradeModalProps) {
           <div className="space-y-3">
             <Label className="text-sm font-semibold">Payment Method</Label>
             <RadioGroup value={provider} onValueChange={(value: string) => setProvider(value as "paystack" | "stripe")}>
-              <div className="flex items-center space-x-2 border rounded-lg p-3 cursor-pointer hover:bg-accent">
-                <RadioGroupItem value="paystack" id="paystack" />
-                <Label htmlFor="paystack" className="cursor-pointer flex-1">
-                  <div className="flex items-center gap-2">
-                    <CreditCard className="h-4 w-4" />
-                    <span>Paystack</span>
-                  </div>
-                  <div className="text-xs text-muted-foreground">
-                    Credit/Debit Card, Bank Transfer
-                  </div>
-                </Label>
-              </div>
-              <div className="flex items-center space-x-2 border rounded-lg p-3 cursor-pointer hover:bg-accent">
-                <RadioGroupItem value="stripe" id="stripe" />
-                <Label htmlFor="stripe" className="cursor-pointer flex-1">
-                  <div className="flex items-center gap-2">
-                    <CreditCard className="h-4 w-4" />
-                    <span>Stripe</span>
-                  </div>
-                  <div className="text-xs text-muted-foreground">
-                    Credit/Debit Card, Google Pay, Apple Pay
-                  </div>
-                </Label>
-              </div>
+              {currencyInfo.paymentProviders.includes("paystack") && (
+                <div className="flex items-center space-x-2 border rounded-lg p-3 cursor-pointer hover:bg-accent">
+                  <RadioGroupItem value="paystack" id="paystack" />
+                  <Label htmlFor="paystack" className="cursor-pointer flex-1">
+                    <div className="flex items-center gap-2">
+                      <CreditCard className="h-4 w-4" />
+                      <span>Paystack</span>
+                    </div>
+                    <div className="text-xs text-muted-foreground">
+                      Credit/Debit Card, Bank Transfer
+                    </div>
+                  </Label>
+                </div>
+              )}
+              {currencyInfo.paymentProviders.includes("stripe") && (
+                <div className="flex items-center space-x-2 border rounded-lg p-3 cursor-pointer hover:bg-accent">
+                  <RadioGroupItem value="stripe" id="stripe" />
+                  <Label htmlFor="stripe" className="cursor-pointer flex-1">
+                    <div className="flex items-center gap-2">
+                      <CreditCard className="h-4 w-4" />
+                      <span>Stripe</span>
+                    </div>
+                    <div className="text-xs text-muted-foreground">
+                      Credit/Debit Card, Google Pay, Apple Pay
+                    </div>
+                  </Label>
+                </div>
+              )}
             </RadioGroup>
           </div>
 

@@ -5,8 +5,11 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import Link from 'next/link';
+import { useGeolocation } from '@/lib/hooks/use-geolocation';
 
 export default function PricingSection() {
+  const { currencyInfo, isLoading } = useGeolocation();
+
   const plans = [
     {
       name: 'Free',
@@ -29,7 +32,7 @@ export default function PricingSection() {
     },
     {
       name: 'Pro',
-      price: '$19',
+      price: isLoading ? '$19' : `${currencyInfo.symbol}${currencyInfo.price.toLocaleString()}`,
       period: '/month',
       description: 'For growing businesses',
       features: [

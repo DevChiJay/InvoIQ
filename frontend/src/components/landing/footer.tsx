@@ -13,31 +13,20 @@ export default function Footer() {
       { name: 'Pricing', href: '/#pricing' },
       { name: 'Demo', href: '/#demo' },
     ],
-    company: [
-      { name: 'About', href: '/about' },
-      { name: 'Blog', href: '/blog' },
-      { name: 'Contact', href: 'mailto:hello@invoiq.com' },
-    ],
     legal: [
       { name: 'Privacy Policy', href: '/privacy' },
       { name: 'Terms of Service', href: '/terms' },
-      { name: 'Cookie Policy', href: '/cookies' },
-    ],
-    resources: [
-      { name: 'Documentation', href: '/docs' },
-      { name: 'API Reference', href: '/docs/api' },
-      { name: 'Support', href: '/support' },
     ],
   };
 
   return (
     <footer className="bg-[#0F172A] text-[#E2E8F0] border-t border-white/10">
       <div className="container mx-auto px-4 py-12">
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {/* Brand */}
-          <div className="col-span-2 md:col-span-1">
+          <div>
             <Link href="/" className="flex items-center gap-2 mb-4">
-              <div className="p-2 bg-gradient-to-br from-[#6366F1] to-[#14B8A6] rounded-lg">
+              <div className="p-2 bg-linear-to-br from-[#6366F1] to-[#14B8A6] rounded-lg">
                 <FileText className="h-5 w-5 text-white" />
               </div>
               <span className="text-xl font-bold text-white">InvoIQ</span>
@@ -52,40 +41,6 @@ export default function Footer() {
             <h3 className="font-semibold text-white mb-4">Product</h3>
             <ul className="space-y-2">
               {footerLinks.product.map((link) => (
-                <li key={link.name}>
-                  <Link 
-                    href={link.href}
-                    className="text-sm hover:text-white transition-colors"
-                  >
-                    {link.name}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Company Links */}
-          <div>
-            <h3 className="font-semibold text-white mb-4">Company</h3>
-            <ul className="space-y-2">
-              {footerLinks.company.map((link) => (
-                <li key={link.name}>
-                  <Link 
-                    href={link.href}
-                    className="text-sm hover:text-white transition-colors"
-                  >
-                    {link.name}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Resources Links */}
-          <div>
-            <h3 className="font-semibold text-white mb-4">Resources</h3>
-            <ul className="space-y-2">
-              {footerLinks.resources.map((link) => (
                 <li key={link.name}>
                   <Link 
                     href={link.href}
@@ -120,9 +75,10 @@ export default function Footer() {
 
         {/* Bottom Section */}
         <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-          <p className="text-sm text-gray-400">
-            © {currentYear} InvoIQ. All rights reserved.
-          </p>
+          <div className="text-sm text-gray-400">
+            <p>© {currentYear} InvoIQ. All rights reserved.</p>
+            <p className="mt-1">Created by <span className="text-white font-medium">Devchi Digital</span></p>
+          </div>
           
           <div className="flex items-center gap-6">
             <a 
