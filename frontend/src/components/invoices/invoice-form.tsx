@@ -17,6 +17,8 @@ import { Loader2, Plus, Trash2, UserPlus } from 'lucide-react';
 import { ClientFormModal } from '@/components/clients/client-form-modal';
 import type { Invoice, InvoiceCreate, InvoiceUpdate, InvoiceItem, Client } from '@/types/api';
 import { useClients } from '@/lib/hooks/use-clients';
+import { CURRENCIES, DEFAULT_CURRENCY } from '@/lib/currency';
+import { formatCurrency } from '@/lib/format';
 
 interface InvoiceFormProps {
   invoice?: Invoice;
@@ -83,6 +85,7 @@ export function InvoiceForm({
     due_date: invoice?.due_date
       ? new Date(invoice.due_date).toISOString().split('T')[0]
       : extractedData?.invoice_details?.due_date || getDefaultDueDate(),
+    currency: invoice?.currency || DEFAULT_CURRENCY,
     tax: invoice?.tax ?? extractedData?.financial?.tax ?? 0,
     status: invoice?.status || 'draft' as const,
     notes: invoice?.notes || extractedData?.notes || '',
@@ -166,6 +169,7 @@ export function InvoiceForm({
         client_id: formData.client_id,
         issued_date: formData.issued_date,
         due_date: formData.due_date,
+        currency: formData.currency,
         items: items.filter((item) => item.description.trim()),
         subtotal: subtotal,
         tax: formData.tax,
@@ -280,48 +284,72 @@ export function InvoiceForm({
             </div>
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="status">
-              Status <span className="text-destructive">*</span>
-            </Label>
-            <Select
-              value={formData.status}
-              onValueChange={(value) => handleChange('status', value)}
-              disabled={isLoading}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Select status" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="draft">
-                  <div className="flex items-center gap-2">
-                    <div className="h-2 w-2 rounded-full bg-muted-foreground" />
-                    <span>Draft</span>
-                  </div>
-                </SelectItem>
-                <SelectItem value="sent">
-                  <div className="flex items-center gap-2">
-                    <div className="h-2 w-2 rounded-full bg-blue-500" />
-                    <span>Sent</span>
-                  </div>
-                </SelectItem>
-                <SelectItem value="paid">
-                  <div className="flex items-center gap-2">
-                    <div className="h-2 w-2 rounded-full bg-green-500" />
-                    <span>Paid</span>
-                  </div>
-                </SelectItem>
-                <SelectItem value="overdue">
-                  <div className="flex items-center gap-2">
-                    <div className="h-2 w-2 rounded-full bg-red-500" />
-                    <span>Overdue</span>
-                  </div>
-                </SelectItem>
-              </SelectContent>
-            </Select>
-            {errors.status && (
-              <p className="text-sm text-destructive">{errors.status}</p>
-            )}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="currency">
+                Currency <span className="text-destructive">*</span>
+              </Label>
+              <Select
+                value={formData.currency}
+                onValueChange={(value) => handleChange('currency', value)}
+                disabled={isLoading}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select currency" />
+                </SelectTrigger>
+                <SelectContent>
+                  {CURRENCIES.map((currency) => (
+                    <SelectItem key={currency.code} value={currency.code}>
+                      {currency.symbol} {currency.name} ({currency.code})
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="status">
+                Status <span className="text-destructive">*</span>
+              </Label>
+              <Select
+                value={formData.status}
+                onValueChange={(value) => handleChange('status', value)}
+                disabled={isLoading}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select status" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="draft">
+                    <div className="flex items-center gap-2">
+                      <div className="h-2 w-2 rounded-full bg-muted-foreground" />
+                      <span>Draft</span>
+                    </div>
+                  </SelectItem>
+                  <SelectItem value="sent">
+                    <div className="flex items-center gap-2">
+                      <div className="h-2 w-2 rounded-full bg-blue-500" />
+                      <span>Sent</span>
+                    </div>
+                  </SelectItem>
+                  <SelectItem value="paid">
+                    <div className="flex items-center gap-2">
+                      <div className="h-2 w-2 rounded-full bg-green-500" />
+                      <span>Paid</span>
+                    </div>
+                  </SelectItem>
+                  <SelectItem value="overdue">
+                    <div className="flex items-center gap-2">
+                      <div className="h-2 w-2 rounded-full bg-red-500" />
+                      <span>Overdue</span>
+                    </div>
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+              {errors.status && (
+                <p className="text-sm text-destructive">{errors.status}</p>
+              )}
+            </div>
           </div>
         </CardContent>
       </Card>
@@ -428,15 +456,15 @@ export function InvoiceForm({
           <div className="space-y-2 pt-4 border-t">
             <div className="flex justify-between text-sm">
               <span className="text-muted-foreground">Subtotal:</span>
-              <span>${subtotal.toFixed(2)}</span>
+              <span>{formatCurrency(subtotal, formData.currency)}</span>
             </div>
             <div className="flex justify-between text-sm">
               <span className="text-muted-foreground">Tax ({formData.tax}%):</span>
-              <span>${taxAmount.toFixed(2)}</span>
+              <span>{formatCurrency(taxAmount, formData.currency)}</span>
             </div>
             <div className="flex justify-between text-lg font-bold">
               <span>Total:</span>
-              <span>${total.toFixed(2)}</span>
+              <span>{formatCurrency(total, formData.currency)}</span>
             </div>
           </div>
 

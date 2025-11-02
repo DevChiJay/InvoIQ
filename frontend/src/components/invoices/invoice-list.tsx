@@ -190,7 +190,7 @@ export function InvoiceList({ invoices, isLoading, onDelete }: InvoiceListProps)
                 </TableCell>
                 <TableCell className="text-right font-semibold">
                   <Link href={`/dashboard/invoices/${invoice.id}`} className="block">
-                    {formatCurrency(invoice.total)}
+                    {formatCurrency(invoice.total, invoice.currency)}
                   </Link>
                 </TableCell>
                 <TableCell className="text-right">
@@ -247,7 +247,7 @@ export function InvoiceList({ invoices, isLoading, onDelete }: InvoiceListProps)
                 </div>
                 <div className="flex justify-between text-sm font-semibold">
                   <span>Total:</span>
-                  <span>{formatCurrency(invoice.total)}</span>
+                  <span>{formatCurrency(invoice.total, invoice.currency)}</span>
                 </div>
                 <div className="flex gap-2 pt-2">
                   <Button variant="outline" size="sm" className="flex-1" asChild>

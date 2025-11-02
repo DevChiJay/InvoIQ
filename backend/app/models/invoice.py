@@ -21,6 +21,7 @@ class Invoice(Base):
     issued_date = Column(Date, nullable=True)
     due_date = Column(Date, nullable=True)
 
+    currency = Column(String(3), nullable=False, default="NGN")  # ISO 4217 currency code
     subtotal = Column(Numeric(12, 2), nullable=True)
     tax = Column(Numeric(12, 2), nullable=True)
     total = Column(Numeric(12, 2), nullable=True)

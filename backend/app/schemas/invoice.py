@@ -44,6 +44,7 @@ class InvoiceBase(BaseModel):
     issued_date: date | None = None
     due_date: date | None = None
 
+    currency: str = "NGN"  # ISO 4217 currency code (default: Nigerian Naira)
     subtotal: Decimal | None = None
     tax: Decimal | None = None
     total: Decimal | None = None
@@ -59,6 +60,7 @@ class InvoiceUpdate(BaseModel):
     status: str | None = None
     issued_date: date | None = None
     due_date: date | None = None
+    currency: str | None = None  # Allow currency updates
     subtotal: Decimal | None = None
     tax: Decimal | None = None
     total: Decimal | None = None

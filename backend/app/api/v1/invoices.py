@@ -123,6 +123,7 @@ def create_invoice(payload: InvoiceCreate, db: Session = Depends(get_db), curren
         status=payload.status or "draft",
         issued_date=payload.issued_date,
         due_date=payload.due_date,
+        currency=payload.currency or "NGN",  # Use provided currency or default to NGN
         subtotal=payload.subtotal,
         tax=payload.tax,
         total=payload.total,

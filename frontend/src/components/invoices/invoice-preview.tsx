@@ -147,10 +147,10 @@ export function InvoicePreview({
                     <td className="py-4 px-2 text-sm text-foreground">{item.description}</td>
                     <td className="py-4 px-2 text-sm text-foreground text-right">{Number(item.quantity)}</td>
                     <td className="py-4 px-2 text-sm text-foreground text-right">
-                      {formatCurrency(item.unit_price)}
+                      {formatCurrency(item.unit_price, invoice.currency)}
                     </td>
                     <td className="py-4 px-2 text-sm font-semibold text-foreground text-right">
-                      {formatCurrency(item.amount)}
+                      {formatCurrency(item.amount, invoice.currency)}
                     </td>
                   </tr>
                 ))}
@@ -164,17 +164,17 @@ export function InvoicePreview({
           <div className="w-full sm:w-80 space-y-3">
             <div className="flex justify-between py-2 border-b border-border">
               <span className="text-sm text-muted-foreground">Subtotal:</span>
-              <span className="text-sm font-semibold text-foreground">{formatCurrency(subtotal)}</span>
+              <span className="text-sm font-semibold text-foreground">{formatCurrency(subtotal, invoice.currency)}</span>
             </div>
             {invoice.tax > 0 && (
               <div className="flex justify-between py-2 border-b border-border">
                 <span className="text-sm text-muted-foreground">Tax ({invoice.tax}%):</span>
-                <span className="text-sm font-semibold text-foreground">{formatCurrency(taxAmount)}</span>
+                <span className="text-sm font-semibold text-foreground">{formatCurrency(taxAmount, invoice.currency)}</span>
               </div>
             )}
             <div className="flex justify-between py-3 px-4 bg-muted rounded-lg">
               <span className="text-lg font-bold text-foreground">Total:</span>
-              <span className="text-lg font-bold text-foreground">{formatCurrency(total)}</span>
+              <span className="text-lg font-bold text-foreground">{formatCurrency(total, invoice.currency)}</span>
             </div>
           </div>
         </div>

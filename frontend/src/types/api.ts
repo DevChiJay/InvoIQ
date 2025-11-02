@@ -98,6 +98,7 @@ export interface Invoice {
   issued_date: string;
   due_date: string;
   items: InvoiceItem[];
+  currency: string;  // ISO 4217 currency code (e.g., 'NGN', 'USD', 'EUR')
   subtotal: number;
   tax: number;
   total: number;
@@ -115,6 +116,7 @@ export interface InvoiceCreate {
   issued_date: string;
   due_date: string;
   items: InvoiceItem[];
+  currency?: string;  // ISO 4217 currency code (default: 'NGN')
   subtotal?: number;
   tax?: number;
   total?: number;
@@ -127,6 +129,7 @@ export interface InvoiceUpdate {
   issued_date?: string;
   due_date?: string;
   items?: InvoiceItem[];
+  currency?: string;  // ISO 4217 currency code
   subtotal?: number;
   tax?: number;
   total?: number;

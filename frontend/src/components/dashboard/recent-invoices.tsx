@@ -110,7 +110,7 @@ export function RecentInvoices({ invoices, isLoading }: RecentInvoicesProps) {
                 </p>
               </div>
               <div className="text-right">
-                <p className="font-semibold">{formatCurrency(invoice.total)}</p>
+                <p className="font-semibold">{formatCurrency(invoice.total, invoice.currency)}</p>
                 <p className="text-xs text-muted-foreground">
                   Due: {formatSimpleDate(invoice.due_date)}
                 </p>
