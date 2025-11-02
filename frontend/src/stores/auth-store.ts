@@ -138,6 +138,10 @@ export const useAuthStore = create<AuthState>()(
           error: null,
           _hasHydrated: true,
         });
+        // Redirect to landing page after logout
+        if (typeof window !== 'undefined') {
+          window.location.href = '/';
+        }
       },
 
       fetchUser: async () => {

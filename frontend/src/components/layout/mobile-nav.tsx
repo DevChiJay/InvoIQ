@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { useEffect } from 'react';
 import { cn } from '@/lib/utils';
@@ -67,9 +68,16 @@ export default function MobileNav() {
         <div className="flex h-full flex-col">
           {/* Header with close button */}
           <div className="flex items-center justify-between border-b border-gray-200 dark:border-gray-700 px-6 py-4">
-            <h2 className="text-xl font-bold bg-gradient-to-r from-teal-600 to-emerald-600 bg-clip-text text-transparent">
-              InvoIQ
-            </h2>
+            <Link href="/dashboard" onClick={closeMobileMenu} className="flex items-center">
+              <Image 
+                src="/logo.svg" 
+                alt="InvoIQ" 
+                width={120} 
+                height={32}
+                className="h-8 w-auto dark:brightness-0 dark:invert"
+                priority
+              />
+            </Link>
             <button
               onClick={closeMobileMenu}
               className="rounded-lg p-2 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"

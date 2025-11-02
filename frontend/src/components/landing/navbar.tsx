@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Menu, X } from 'lucide-react';
 import { useState } from 'react';
@@ -23,9 +24,14 @@ export default function Navbar() {
           {/* Logo */}
           <div className="shrink-0">
             <Link href="/" className="flex items-center">
-              <h1 className="text-2xl font-bold bg-gradient-to-r from-[#6366F1] to-[#14B8A6] bg-clip-text text-transparent">
-                InvoIQ
-              </h1>
+              <Image 
+                src="/logo.svg" 
+                alt="InvoIQ" 
+                width={160} 
+                height={42}
+                className="h-10 w-auto dark:brightness-0 dark:invert"
+                priority
+              />
             </Link>
           </div>
 

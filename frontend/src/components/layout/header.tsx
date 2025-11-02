@@ -1,5 +1,7 @@
 'use client';
 
+import Link from 'next/link';
+import Image from 'next/image';
 import { useAuthStore } from '@/stores/auth-store';
 import { useUIStore } from '@/stores/ui-store';
 import { Button } from '@/components/ui/button';
@@ -29,7 +31,17 @@ export default function Header() {
               <Menu className="h-6 w-6" />
             </Button>
             
-            <h1 className="text-2xl font-bold bg-gradient-to-r from-[#6366F1] to-[#14B8A6] bg-clip-text text-transparent">InvoIQ</h1>
+            {/* Logo - clickable to dashboard home */}
+            <Link href="/dashboard" className="flex items-center">
+              <Image 
+                src="/logo.svg" 
+                alt="InvoIQ" 
+                width={140} 
+                height={38}
+                className="h-9 w-auto dark:brightness-0 dark:invert"
+                priority
+              />
+            </Link>
           </div>
 
           <div className="flex items-center gap-4">

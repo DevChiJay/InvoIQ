@@ -43,7 +43,7 @@ export default function CTASection() {
               size="lg" 
               variant="outline" 
               asChild 
-              className="text-lg px-8 py-6 border-2 border-white text-white hover:bg-white/10"
+              className="text-lg px-8 py-6 bg-white/10 border-2 border-white text-white hover:bg-white hover:text-[#6366F1]"
             >
               <Link href="#pricing">View Pricing</Link>
             </Button>
