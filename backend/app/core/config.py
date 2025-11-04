@@ -1,5 +1,9 @@
 from pydantic import BaseModel
 import os
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
 
 class Settings(BaseModel):
     SECRET_KEY: str = os.getenv("SECRET_KEY", "dev-secret-key")
@@ -26,9 +30,11 @@ class Settings(BaseModel):
     SMTP_PORT: int = int(os.getenv("SMTP_PORT", "587"))
     SMTP_USER: str | None = os.getenv("SMTP_USER")
     SMTP_PASSWORD: str | None = os.getenv("SMTP_PASSWORD")
-    SMTP_FROM_EMAIL: str = os.getenv("SMTP_FROM_EMAIL", os.getenv("SMTP_USER", "noreply@invoiq.com"))
-    SMTP_FROM_NAME: str = os.getenv("SMTP_FROM_NAME", "InvoIQ")
+    # Gmail requires FROM email to match authenticated user
+    SMTP_FROM_EMAIL: str = os.getenv("SMTP_FROM_EMAIL") or os.getenv("SMTP_USER") or "hello@invoyq.com"
+    SMTP_FROM_NAME: str = os.getenv("SMTP_FROM_NAME", "InvoYQ")
     SMTP_USE_TLS: bool = os.getenv("SMTP_USE_TLS", "true").lower() == "true"
+    SMTP_USE_SSL: bool = os.getenv("SMTP_USE_SSL", "false").lower() == "true"
     
     # Frontend URL for email verification links
     FRONTEND_URL: str = os.getenv("FRONTEND_URL", "http://localhost:3000")

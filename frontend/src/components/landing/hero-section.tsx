@@ -35,7 +35,7 @@ export default function HeroSection() {
 
           {/* Subheadline */}
           <p className="text-xl sm:text-2xl text-gray-600 dark:text-[#E2E8F0]/80 max-w-3xl mx-auto mb-12 leading-relaxed">
-            Save hours of manual data entry. InvoIQ uses AI to extract invoice details from images and text, 
+            Save hours of manual data entry. InvoYQ uses AI to extract invoice details from images and text, 
             then helps you manage clients and get paid faster.
           </p>
 

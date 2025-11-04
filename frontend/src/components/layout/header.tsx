@@ -38,7 +38,7 @@ export default function Header() {
             <Link href="/dashboard" className="flex items-center">
               <Image 
                 src="/logo.svg" 
-                alt="InvoIQ" 
+                alt="InvoYQ" 
                 width={140} 
                 height={38}
                 className="h-9 w-auto dark:brightness-0 dark:invert"

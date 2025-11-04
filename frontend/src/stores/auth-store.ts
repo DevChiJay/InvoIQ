@@ -98,20 +98,11 @@ export const useAuthStore = create<AuthState>()(
       register: async (email: string, password: string, full_name: string) => {
         set({ isLoading: true, error: null });
         try {
-          // Step 1: Register - backend returns the user object directly
-          const registerResponse = await authAPI.register(email, password, full_name);
-          const user = registerResponse.data;
-          
-          // Step 2: Login to get token
-          const loginResponse = await authAPI.login(email, password);
-          const { access_token } = loginResponse.data;
-          
-          setTokens(access_token);
-          setUser(user);
+          // Register - backend returns the user object directly
+          // Note: User must verify email before they can login
+          await authAPI.register(email, password, full_name);
           
           set({
-            user,
-            isAuthenticated: true,
             isLoading: false,
             error: null,
             _hasHydrated: true,

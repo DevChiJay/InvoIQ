@@ -20,6 +20,7 @@ class EmailService:
         self.smtp_from_email = settings.SMTP_FROM_EMAIL
         self.smtp_from_name = settings.SMTP_FROM_NAME
         self.use_tls = settings.SMTP_USE_TLS
+        self.use_ssl = settings.SMTP_USE_SSL
     
     def _send_email(self, to_email: str, subject: str, html_content: str, text_content: Optional[str] = None) -> bool:
         """Send an email using SMTP"""
@@ -39,26 +40,34 @@ class EmailService:
             part2 = MIMEText(html_content, 'html')
             msg.attach(part2)
             
-            # Send email
-            with smtplib.SMTP(self.smtp_host, self.smtp_port) as server:
-                if self.use_tls:
-                    server.starttls()
-                if self.smtp_user and self.smtp_password:
-                    server.login(self.smtp_user, self.smtp_password)
-                server.send_message(msg)
+            # Send email using SSL or TLS
+            if self.use_ssl:
+                # Use SSL (port 465)
+                with smtplib.SMTP_SSL(self.smtp_host, self.smtp_port) as server:
+                    if self.smtp_user and self.smtp_password:
+                        server.login(self.smtp_user, self.smtp_password)
+                    server.send_message(msg)
+            else:
+                # Use TLS (port 587)
+                with smtplib.SMTP(self.smtp_host, self.smtp_port) as server:
+                    if self.use_tls:
+                        server.starttls()
+                    if self.smtp_user and self.smtp_password:
+                        server.login(self.smtp_user, self.smtp_password)
+                    server.send_message(msg)
             
             logger.info(f"Email sent successfully to {to_email}")
             return True
         
         except Exception as e:
             logger.error(f"Failed to send email to {to_email}: {str(e)}")
-            return False
+            raise  # Re-raise to provide better error feedback
     
     def send_verification_email(self, to_email: str, verification_url: str, full_name: Optional[str] = None) -> bool:
         """Send email verification link to user"""
         display_name = full_name or to_email
         
-        subject = "Verify your InvoIQ account"
+        subject = "Verify your InvoYQ account"
         
         html_content = f"""
         <!DOCTYPE html>
@@ -84,21 +93,21 @@ class EmailService:
         <body>
             <div class="container">
                 <div class="header">
-                    <h1>Welcome to InvoIQ!</h1>
+                    <h1>Welcome to InvoYQ!</h1>
                 </div>
                 <div class="content">
                     <h2>Hi {display_name},</h2>
-                    <p>Thank you for signing up for InvoIQ. To complete your registration, please verify your email address by clicking the button below:</p>
+                    <p>Thank you for signing up for InvoYQ. To complete your registration, please verify your email address by clicking the button below:</p>
                     <p style="text-align: center;">
-                        <a href="{verification_url}" class="button">Verify Email Address</a>
+                        <a href="{verification_url}" class="button" style="color: white;">Verify Email Address</a>
                     </p>
                     <p>Or copy and paste this link into your browser:</p>
                     <p style="word-break: break-all; color: #4F46E5;">{verification_url}</p>
                     <p>This link will expire in 24 hours.</p>
-                    <p>If you didn't create an account with InvoIQ, you can safely ignore this email.</p>
+                    <p>If you didn't create an account with InvoYQ, you can safely ignore this email.</p>
                 </div>
                 <div class="footer">
-                    <p>&copy; 2025 InvoIQ. All rights reserved.</p>
+                    <p>&copy; 2025 InvoYQ. All rights reserved.</p>
                 </div>
             </div>
         </body>
@@ -106,19 +115,19 @@ class EmailService:
         """
         
         text_content = f"""
-        Welcome to InvoIQ!
+        Welcome to InvoYQ!
         
         Hi {display_name},
         
-        Thank you for signing up for InvoIQ. To complete your registration, please verify your email address by visiting this link:
+        Thank you for signing up for InvoYQ. To complete your registration, please verify your email address by visiting this link:
         
         {verification_url}
         
         This link will expire in 24 hours.
         
-        If you didn't create an account with InvoIQ, you can safely ignore this email.
+        If you didn't create an account with InvoYQ, you can safely ignore this email.
         
-        © 2025 InvoIQ. All rights reserved.
+        © 2025 InvoYQ. All rights reserved.
         """
         
         return self._send_email(to_email, subject, html_content, text_content)

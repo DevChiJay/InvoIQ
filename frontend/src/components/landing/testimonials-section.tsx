@@ -8,14 +8,14 @@ export default function TestimonialsSection() {
     {
       name: 'Sarah Chen',
       role: 'Freelance Designer',
-      content: 'InvoIQ saved me 10+ hours every week. I used to manually enter invoice data, now it\'s done in seconds. Game changer!',
+      content: 'InvoYQ saved me 10+ hours every week. I used to manually enter invoice data, now it\'s done in seconds. Game changer!',
       rating: 5,
       avatar: 'SC',
     },
     {
       name: 'Michael Rodriguez',
       role: 'Agency Owner',
-      content: 'The AI extraction is incredibly accurate. We process 50+ invoices daily and InvoIQ handles them flawlessly.',
+      content: 'The AI extraction is incredibly accurate. We process 50+ invoices daily and InvoYQ handles them flawlessly.',
       rating: 5,
       avatar: 'MR',
     },
@@ -29,7 +29,7 @@ export default function TestimonialsSection() {
     {
       name: 'David Park',
       role: 'Small Business Owner',
-      content: 'Simple, powerful, and affordable. InvoIQ is exactly what I needed to manage my invoicing workflow.',
+      content: 'Simple, powerful, and affordable. InvoYQ is exactly what I needed to manage my invoicing workflow.',
       rating: 5,
       avatar: 'DP',
     },
@@ -43,7 +43,7 @@ export default function TestimonialsSection() {
     {
       name: 'James Wilson',
       role: 'Web Developer',
-      content: 'Clean interface, powerful AI, and great support. InvoIQ is the best invoicing tool I\'ve used.',
+      content: 'Clean interface, powerful AI, and great support. InvoYQ is the best invoicing tool I\'ve used.',
       rating: 5,
       avatar: 'JW',
     },

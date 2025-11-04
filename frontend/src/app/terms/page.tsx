@@ -41,7 +41,7 @@ export default function TermsOfService() {
                   1. Acceptance of Terms
                 </h2>
                 <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
-                  By accessing and using InvoIQ ("the Service"), you agree to be bound by these Terms of Service ("Terms"). 
+                  By accessing and using InvoYQ ("the Service"), you agree to be bound by these Terms of Service ("Terms"). 
                   If you do not agree to these Terms, please do not use our Service.
                 </p>
               </section>
@@ -51,7 +51,7 @@ export default function TermsOfService() {
                   2. Description of Service
                 </h2>
                 <p className="text-gray-600 dark:text-gray-300 leading-relaxed mb-4">
-                  InvoIQ is an AI-powered invoice extraction and management platform that helps businesses:
+                  InvoYQ is an AI-powered invoice extraction and management platform that helps businesses:
                 </p>
                 <ul className="list-disc list-inside text-gray-600 dark:text-gray-300 space-y-2 ml-4">
                   <li>Extract data from invoice documents using AI technology</li>
@@ -83,7 +83,7 @@ export default function TermsOfService() {
                 </h2>
                 <div className="space-y-4">
                   <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
-                    InvoIQ offers both free and paid subscription plans:
+                    InvoYQ offers both free and paid subscription plans:
                   </p>
                   <div className="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg">
                     <h3 className="font-semibold text-gray-900 dark:text-white mb-2">Free Plan</h3>
@@ -136,7 +136,7 @@ export default function TermsOfService() {
                   7. Limitation of Liability
                 </h2>
                 <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
-                  InvoIQ is provided "as is" without warranties of any kind. We shall not be liable for any indirect, 
+                  InvoYQ is provided "as is" without warranties of any kind. We shall not be liable for any indirect, 
                   incidental, special, or consequential damages arising from your use of the Service. Our total liability 
                   shall not exceed the amount you paid for the Service in the 12 months preceding the claim.
                 </p>
@@ -169,13 +169,13 @@ export default function TermsOfService() {
                   10. Contact Information
                 </h2>
                 <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
-                  If you have questions about these Terms of Service, please contact us at support@invoiq.com.
+                  If you have questions about these Terms of Service, please contact us at support@devchi.me.
                 </p>
               </section>
 
               <div className="border-t pt-6 mt-8">
                 <p className="text-sm text-gray-500 dark:text-gray-400 text-center">
-                  InvoIQ is created by <span className="font-medium text-gray-700 dark:text-gray-300">Devchi Digital</span>
+                  InvoYQ is created by <span className="font-medium text-gray-700 dark:text-gray-300">Devchi Digital</span>
                 </p>
               </div>
 

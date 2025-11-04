@@ -3,6 +3,15 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { Toaster } from "@/components/ui/sonner";
 import { QueryProvider } from "@/components/providers/query-provider";
 import "./globals.css";
+import dynamic from "next/dynamic";
+
+
+// Only import analytics in production
+const GoogleAnalytics = dynamic(() => 
+  process.env.NODE_ENV === "production" 
+    ? import("@/components/landing/google-analytics").then(mod => mod.GoogleAnalytics)
+    : Promise.resolve(() => null)
+);
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -16,10 +25,10 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: "InvoIQ - AI-Powered Invoice Management",
-    template: "%s | InvoIQ",
+    default: "InvoYQ - AI-Powered Invoice Management",
+    template: "%s | InvoYQ",
   },
-  description: "Save hours of manual data entry. InvoIQ uses AI to extract invoice details from images and text, then helps you manage clients and get paid faster.",
+  description: "Save hours of manual data entry. InvoYQ uses AI to extract invoice details from images and text, then helps you manage clients and get paid faster.",
   keywords: [
     "AI invoice",
     "invoice management",
@@ -34,7 +43,7 @@ export const metadata: Metadata = {
   ],
   authors: [{ name: "Devchi Digital" }],
   creator: "Devchi",
-  publisher: "InvoIQ",
+  publisher: "InvoYQ",
   formatDetection: {
     email: false,
     address: false,
@@ -47,11 +56,11 @@ export const metadata: Metadata = {
     canonical: "/",
   },
   openGraph: {
-    title: "InvoIQ - AI-Powered Invoice Management",
+    title: "InvoYQ - AI-Powered Invoice Management",
     description:
       "Extract invoice data instantly with AI. Save hours of manual data entry and get paid faster.",
     url: "/",
-    siteName: "InvoIQ",
+    siteName: "InvoYQ",
     locale: "en_US",
     type: "website",
     images: [
@@ -59,13 +68,13 @@ export const metadata: Metadata = {
         url: "/og-image.png",
         width: 1200,
         height: 630,
-        alt: "InvoIQ - AI-Powered Invoice Management",
+        alt: "InvoYQ - AI-Powered Invoice Management",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "InvoIQ - AI-Powered Invoice Management",
+    title: "InvoYQ - AI-Powered Invoice Management",
     description:
       "Extract invoice data instantly with AI. Save hours of manual data entry and get paid faster.",
     images: ["/og-image.png"],
@@ -103,6 +112,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+        {process.env.NODE_ENV === "production" && <GoogleAnalytics />}
         <QueryProvider>
           {children}
           <Toaster />

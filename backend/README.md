@@ -1,4 +1,4 @@
-# InvoIQ Backend API
+# InvoYQ Backend API
 
 AI-powered invoice and client management system backend built with FastAPI, SQLAlchemy, and PostgreSQL.
 
@@ -191,10 +191,10 @@ pytest tests/test_auth.py
 ### Using Docker
 ```bash
 # Build image
-docker build -t invoiq-backend .
+docker build -t invoyq-backend .
 
 # Run container
-docker run -p 8000:8000 --env-file .env invoiq-backend
+docker run -p 8000:8000 --env-file .env invoyq-backend
 ```
 
 ### Using Docker Compose

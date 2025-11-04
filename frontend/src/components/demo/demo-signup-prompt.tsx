@@ -48,7 +48,7 @@ export default function DemoSignupPrompt({ isOpen, onClose }: DemoSignupPromptPr
             <DialogTitle className="text-xl">Great! Your Invoice is Ready</DialogTitle>
           </div>
           <DialogDescription className="text-base">
-            Sign up now to save this invoice and unlock the full power of InvoIQ
+            Sign up now to save this invoice and unlock the full power of InvoYQ
           </DialogDescription>
         </DialogHeader>
 

@@ -141,7 +141,7 @@ export default function PricingSection() {
 
         <p className="text-center text-base text-gray-600 dark:text-[#E2E8F0]/70 mt-12">
           All plans include a 14-day money-back guarantee. Need a custom plan?{' '}
-          <a href="mailto:hello@invoiq.com" className="text-[#6366F1] dark:text-[#14B8A6] hover:underline font-medium">
+          <a href="mailto:hello@invoyq.com" className="text-[#6366F1] dark:text-[#14B8A6] hover:underline font-medium">
             Contact us
           </a>
         </p>

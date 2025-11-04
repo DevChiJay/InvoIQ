@@ -6,7 +6,7 @@
 
   <!-- Home Page -->
   <url>
-    <loc>http://localhost:3000/</loc>
+    <loc>https://invoyq.com/</loc>
     <lastmod>2025-11-02</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
@@ -14,14 +14,14 @@
 
   <!-- Authentication Pages -->
   <url>
-    <loc>http://localhost:3000/login</loc>
+    <loc>https://invoyq.com/login</loc>
     <lastmod>2025-11-02</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
 
   <url>
-    <loc>http://localhost:3000/register</loc>
+    <loc>https://invoyq.com/register</loc>
     <lastmod>2025-11-02</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
@@ -29,42 +29,42 @@
 
   <!-- Dashboard Pages -->
   <url>
-    <loc>http://localhost:3000/dashboard</loc>
+    <loc>https://invoyq.com/dashboard</loc>
     <lastmod>2025-11-02</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
   </url>
 
   <url>
-    <loc>http://localhost:3000/dashboard/clients</loc>
+    <loc>https://invoyq.com/dashboard/clients</loc>
     <lastmod>2025-11-02</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
 
   <url>
-    <loc>http://localhost:3000/dashboard/invoices</loc>
+    <loc>https://invoyq.com/dashboard/invoices</loc>
     <lastmod>2025-11-02</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
 
   <url>
-    <loc>http://localhost:3000/dashboard/extract</loc>
+    <loc>https://invoyq.com/dashboard/extract</loc>
     <lastmod>2025-11-02</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
 
   <url>
-    <loc>http://localhost:3000/dashboard/payments</loc>
+    <loc>https://invoyq.com/dashboard/payments</loc>
     <lastmod>2025-11-02</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
   </url>
 
   <url>
-    <loc>http://localhost:3000/dashboard/settings</loc>
+    <loc>https://invoyq.com/dashboard/settings</loc>
     <lastmod>2025-11-02</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
@@ -72,14 +72,14 @@
 
   <!-- Verification Pages -->
   <url>
-    <loc>http://localhost:3000/verify-email</loc>
+    <loc>https://invoyq.com/verify-email</loc>
     <lastmod>2025-11-02</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.4</priority>
   </url>
 
   <url>
-    <loc>http://localhost:3000/resend-verification</loc>
+    <loc>https://invoyq.com/resend-verification</loc>
     <lastmod>2025-11-02</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.4</priority>

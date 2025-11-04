@@ -71,7 +71,7 @@ export default function MobileNav() {
             <Link href="/dashboard" onClick={closeMobileMenu} className="flex items-center">
               <Image 
                 src="/logo.svg" 
-                alt="InvoIQ" 
+                alt="InvoYQ" 
                 width={120} 
                 height={32}
                 className="h-8 w-auto dark:brightness-0 dark:invert"

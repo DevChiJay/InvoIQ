@@ -23,7 +23,7 @@ export default function ResendVerificationPage() {
     setMessage('')
 
     try {
-      const response = await fetch('http://localhost:8000/v1/auth/resend-verification', {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/v1/auth/resend-verification`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

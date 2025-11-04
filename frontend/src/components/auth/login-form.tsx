@@ -50,12 +50,16 @@ export default function LoginForm() {
       router.push('/dashboard');
     } catch (error: unknown) {
       // Check if error is due to unverified email
-      const errorMessage = error instanceof Error ? error.message : String(error);
-      if (errorMessage.includes('not verified')) {
+      const err = error as { response?: { data?: { detail?: string }; status?: number } };
+      const errorDetail = err.response?.data?.detail || '';
+      const errorStatus = err.response?.status;
+      
+      // 403 status with email verification message
+      if (errorStatus === 403 || errorDetail.toLowerCase().includes('not verified') || errorDetail.toLowerCase().includes('verify')) {
         setUnverifiedEmail(data.email);
         toast.error('Please verify your email before logging in.');
       } else {
-        toast.error('Login failed. Please check your credentials.');
+        toast.error(errorDetail || 'Login failed. Please check your credentials.');
       }
     } finally {
       setIsLoading(false);

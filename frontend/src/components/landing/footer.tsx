@@ -29,7 +29,7 @@ export default function Footer() {
               <div className="p-2 bg-linear-to-br from-[#6366F1] to-[#14B8A6] rounded-lg">
                 <FileText className="h-5 w-5 text-white" />
               </div>
-              <span className="text-xl font-bold text-white">InvoIQ</span>
+              <span className="text-xl font-bold text-white">InvoYQ</span>
             </Link>
             <p className="text-sm text-[#E2E8F0]/70 leading-relaxed">
               AI-powered invoice extraction and management made simple.
@@ -76,13 +76,14 @@ export default function Footer() {
         {/* Bottom Section */}
         <div className="flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="text-sm text-gray-400">
-            <p>© {currentYear} InvoIQ. All rights reserved.</p>
-            <p className="mt-1">Created by <span className="text-white font-medium">Devchi Digital</span></p>
+            <p>© {currentYear} InvoYQ. All rights reserved.</p>
+            <p className="mt-1">Created by <span className="text-white font-medium"><a href='https://www.devchi.me' target='_blank'>
+            Devchi Digital</a></span></p>
           </div>
           
           <div className="flex items-center gap-6">
             <a 
-              href="https://twitter.com/invoiq" 
+              href="https://twitter.com/devchijay" 
               target="_blank" 
               rel="noopener noreferrer"
               className="text-gray-400 hover:text-white transition-colors"
@@ -93,7 +94,7 @@ export default function Footer() {
               </svg>
             </a>
             <a 
-              href="https://github.com/invoiq" 
+              href="https://github.com/devchijay" 
               target="_blank" 
               rel="noopener noreferrer"
               className="text-gray-400 hover:text-white transition-colors"
@@ -104,7 +105,7 @@ export default function Footer() {
               </svg>
             </a>
             <a 
-              href="https://linkedin.com/company/invoiq" 
+              href="https://www.linkedin.com/in/chiemela-james-3681b5246/" 
               target="_blank" 
               rel="noopener noreferrer"
               className="text-gray-400 hover:text-white transition-colors"

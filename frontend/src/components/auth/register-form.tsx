@@ -78,7 +78,7 @@ export default function RegisterForm() {
       <CardHeader className="space-y-1">
         <CardTitle className="text-2xl font-bold">Create an account</CardTitle>
         <CardDescription>
-          Enter your information to get started with InvoIQ
+          Enter your information to get started with InvoYQ
         </CardDescription>
       </CardHeader>
       <CardContent>
